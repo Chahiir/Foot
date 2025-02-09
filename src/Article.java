@@ -1,6 +1,6 @@
 
 /**
- * Classe Article
+ * Classe Articles
  * @version 1.1
  * */
 
