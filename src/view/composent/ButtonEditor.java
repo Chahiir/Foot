@@ -8,15 +8,17 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 
+import service.interfaces.JoueurService;
+
 // Custom editor to handle actions in JTable cells
 public class ButtonEditor extends AbstractCellEditor implements TableCellEditor {
     private EditButton editButton;
     private DeleteButton deleteButton;
     private JPanel panel;
 
-    public ButtonEditor() {
+    public ButtonEditor(JoueurService joueurService) {
         panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        editButton = new EditButton("Modifier", -1);
+        editButton = new EditButton("Modifier", -1, joueurService);
         deleteButton = new DeleteButton("Vendre", -1);
         panel.add(editButton);
         panel.add(deleteButton);
