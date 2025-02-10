@@ -1,25 +1,29 @@
+package dao;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import controller.Article;
+
 /**
- * Classe d'accès aux données contenues dans la table Equipe
+ * Classe d'accès aux données contenues dans la table article
  * @version 1.1
  * */
-public class StaffDAO {
+public class ArticleDAO {
 
     /**
      * Paramètres de connexion à la base de données MySQL
      * URL, LOGIN et PASS sont des constantes
      */
-    final static String URL = "jdbc:mysql://localhost:3306/footmanager"; // Replace with your database name
+    final static String URL = "jdbc:mysql://localhost:3306/article"; // Replace with your database name
     final static String LOGIN = "root"; // Replace with your MySQL username
     final static String PASS = "root"; // Replace with your MySQL password
 
     /**
      * Constructeur de la classe
      */
-    public StaffDAO() {
+    public ArticleDAO() {
         // Chargement du pilote de bases de données
         try {
             Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL JDBC driver
@@ -35,7 +39,7 @@ public class StaffDAO {
      * @param nouvArticle l'article à ajouter
      * @return le nombre de lignes ajoutées dans la table
      */
-    public int ajouter(Staff nouvStaff) {
+    public int ajouter(Article nouvArticle) {
         Connection con = null;
         PreparedStatement ps = null;
         int retour = 0;
@@ -46,12 +50,10 @@ public class StaffDAO {
             con = DriverManager.getConnection(URL, LOGIN, PASS);
             // Préparation de l'instruction SQL, chaque ? représente une valeur à communiquer dans l'insertion
             // Les getters permettent de récupérer les valeurs des attributs souhaités de nouvArticle
-            ps = con.prepareStatement("INSERT INTO staff (id, nom, role,specialite, equipe_id) VALUES (?, ?,?, ?, ?)");
-            ps.setInt(1, nouvStaff.getId());
-            ps.setString(2, nouvStaff.getNom());
-            ps.setString(3, nouvStaff.getRole());
-            ps.setString(4, nouvStaff.getSpecialite());
-            ps.setInt(5, nouvStaff.getEquipe_id());
+            ps = con.prepareStatement("INSERT INTO article (art_designation, art_pu_ht, art_qte_stock) VALUES (?, ?, ?)");
+            ps.setString(1, nouvArticle.getDesignation());
+            ps.setDouble(2, nouvArticle.getPuHt());
+            ps.setInt(3, nouvArticle.getQteStock());
 
             // Exécution de la requête
             retour = ps.executeUpdate();
@@ -76,23 +78,23 @@ public class StaffDAO {
      * @return l'article
      * @return null si aucun article ne correspond à cette référence
      */
-    public Staff getStaff(int id) {
+    public Article getArticle(int reference) {
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
-        Staff retour = null;
+        Article retour = null;
 
         // Connexion à la base de données
         try {
             con = DriverManager.getConnection(URL, LOGIN, PASS);
-            ps = con.prepareStatement("SELECT * FROM staff WHERE id = ?");
-            ps.setInt(1, id);
+            ps = con.prepareStatement("SELECT * FROM article WHERE art_reference = ?");
+            ps.setInt(1, reference);
 
             // On exécute la requête
             rs = ps.executeQuery();
             // Passe à la première (et unique) ligne retournée
             if (rs.next())
-                retour = new Staff(rs.getInt("id"), rs.getString("nom"),rs.getString("role"),rs.getString("specialite") ,rs.getInt("equipe_id"));
+                retour = new Article(rs.getInt("art_reference"), rs.getString("art_designation"), rs.getDouble("art_pu_ht"), rs.getInt("art_qte_stock"));
 
         } catch (Exception ee) {
             ee.printStackTrace();
@@ -115,22 +117,22 @@ public class StaffDAO {
      * Permet de récupérer tous les articles stockés dans la table article
      * @return une ArrayList d'Articles
      */
-    public List<Staff> getListeStaff() {
+    public List<Article> getListeArticles() {
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
-        List<Staff> retour = new ArrayList<Staff>();
+        List<Article> retour = new ArrayList<Article>();
 
         // Connexion à la base de données
         try {
             con = DriverManager.getConnection(URL, LOGIN, PASS);
-            ps = con.prepareStatement("SELECT * FROM staff");
+            ps = con.prepareStatement("SELECT * FROM article");
 
             // On exécute la requête
             rs = ps.executeQuery();
             // On parcourt les lignes du résultat
             while (rs.next())
-                retour.add(new Staff(rs.getInt("id"), rs.getString("nom"),rs.getString("role"),rs.getString("specialite") ,rs.getInt("equipe_id")));
+                retour.add(new Article(rs.getInt("art_reference"), rs.getString("art_designation"), rs.getDouble("art_pu_ht"), rs.getInt("art_qte_stock")));
 
         } catch (Exception ee) {
             ee.printStackTrace();
@@ -151,20 +153,20 @@ public class StaffDAO {
 
     // Main permettant de tester la classe
     public static void main(String[] args) throws SQLException {
-        StaffDAO staffDAO  = new StaffDAO();
+        ArticleDAO articleDAO = new ArticleDAO();
         // Test de la méthode ajouter
-        Staff a = new Staff("TEST","Physic","Massage",1);
-        int retour = staffDAO.ajouter(a);
+        Article a = new Article("Set de 2 raquettes de ping-pong", 149.9, 10);
+        int retour = articleDAO.ajouter(a);
 
         System.out.println(retour + " lignes ajoutées");
 
         // Test de la méthode getArticle
-        Staff a2 = staffDAO.getStaff(1);
+        Article a2 = articleDAO.getArticle(1);
         System.out.println(a2);
 
         // Test de la méthode getListeArticles
-        List<Staff> liste = staffDAO.getListeStaff();
-        for (Staff art : liste) {
+        List<Article> liste = articleDAO.getListeArticles();
+        for (Article art : liste) {
             System.out.println(art.toString());
         }
     }
