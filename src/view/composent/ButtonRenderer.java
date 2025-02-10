@@ -8,14 +8,16 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
+import service.interfaces.PlayerService;
+
 // Custom renderer to place buttons in JTable cells
 public class ButtonRenderer extends JPanel implements TableCellRenderer {
     EditButton editButton;
     DeleteButton deleteButton;
 
-    public ButtonRenderer() {
+    public ButtonRenderer(PlayerService playerService) {
         setLayout(new FlowLayout(FlowLayout.LEFT));
-        editButton = new EditButton("Modifier", -1);  // Initial ID set to -1 or other invalid value
+        editButton = new EditButton("Modifier", -1, playerService);  // Initial ID set to -1 or other invalid value
         deleteButton = new DeleteButton("Vendre", -1);
         add(editButton);
         add(deleteButton);

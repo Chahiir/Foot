@@ -1,4 +1,4 @@
-
+package dao;
 /**
  * Classe Joueur
  * @version 1.1

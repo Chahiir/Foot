@@ -1,13 +1,14 @@
+package dao;
 
 /**
- * Classe Staff
+ * Classe Equipe
  * @version 1.1
  * */
 
-public class Staff {
+public class Equipe {
 
 	/** 
-	 * Id de Joueur
+	 * Id de l'equipe
 	 */
 	private int id;		
 	/**
@@ -15,19 +16,10 @@ public class Staff {
 	 */
 	private String nom;	
 	/**
-	 * Role
+	 * solde de l'equipe pour acheter joueur avec
 	 */
-	private String role;
-	/**
-	 * specialite du membre de staff
-	 */
-	private String specialite;
-	
+	private int solde;		
 
-	/**
-	 * equipe
-	 */
-	private int equipe_id;
 
 
 	/**
@@ -37,12 +29,11 @@ public class Staff {
 	 * @param puHt prix unitaire hors taxe
 	 * @param qteStock quantité en stock
 	 */
-	public Staff(int id,String nom,String specialite,String role, int equipe_id) {
+	public Equipe(int id,String nom, int solde) {
 		this.id = id;
 		this.nom=nom;
-		this.specialite = specialite;
-		this.role = role;
-		this.equipe_id = equipe_id;
+		this.solde = solde;
+
 	}
 	/**
 	 * Constructeur
@@ -51,25 +42,20 @@ public class Staff {
 	 * @param puHt prix unitaire hors taxe
 	 * @param qteStock quantité en stock
 	 */
-	public Staff(String nom,String specialite,String role, int equipe_id) {
+	public Equipe(String nom, int solde) {
 		this.nom=nom;
-		this.specialite = specialite;
-		this.role = role;
-		this.equipe_id = equipe_id;
+		this.solde = solde;
+
 	}
-	
-	
 	
 	/**
 	 * Constructeur - ni la référence ni la qte en stock ne sont fixées dans le programme
 	 * @param designation désignation de l'article
 	 * @param puHt prix unitaire hors taxe
 	 */
-	public Staff(String nom,String specialite,String role) {
-		this.nom=nom;
-		this.specialite = specialite;
-		this.role = role;
-		this.equipe_id = 0;
+	public Equipe(String nom) {
+		this.nom = nom;
+		this.solde = 0;
 	}
 	/**
 	 * getter pour l'attribut reference
@@ -96,46 +82,24 @@ public class Staff {
 	 * getter  pour l'attribut puHt
 	 * @return valeur de prix unitaire HT
 	 */
+	public int getSolde() {
+		return solde;
+	}
+	/**
+	 * setter  pour l'attribut puHt
+	 * @param puHt :  nouvelle valeur de prix unitaire HT
+	 */
+	public void setSolde(int solde) {
+		this.solde = solde;
+	}
 	
-	public void setEquipe_id(int equipe_id) {
-		this.equipe_id = equipe_id;
-	}
-	/**
-	 * @return the role
-	 */
-	public String getRole() {
-		return role;
-	}
-	/**
-	 * @return the specialite
-	 */
-	public String getSpecialite() {
-		return specialite;
-	}
-	/**
-	 * @return the equipe_id
-	 */
-	public int getEquipe_id() {
-		return equipe_id;
-	}
-	/**
-	 * @param role the role to set
-	 */
-	public void setRole(String role) {
-		this.role = role;
-	}
-	/**
-	 * @param specialite the specialite to set
-	 */
-	public void setSpecialite(String specialite) {
-		this.specialite = specialite;
-	}
+
 	/**
 	 * Redéfinition de la méthode toString permettant de définir la traduction de l'objet en String
 	 * pour l'affichage par exemple
 	 */
 	public String toString() {
-		return "Membre du Staff [ID : " + Integer.toString(id) + " - Nom : " + nom
-				+ "Role :" + role + " Specialite : " + specialite + "]";
+		return "Equipe [ID : " + Integer.toString(id) + " - " + nom
+				+ ", " + Integer.toString(solde) + "M € HT,]";
 	}
 }

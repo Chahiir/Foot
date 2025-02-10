@@ -1,3 +1,4 @@
+package dao;
 
 /**
  * Classe Articles

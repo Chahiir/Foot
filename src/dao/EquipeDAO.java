@@ -1,3 +1,4 @@
+package dao;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +7,7 @@ import java.util.List;
  * Classe d'accès aux données contenues dans la table Equipe
  * @version 1.1
  * */
-public class JoueurDAO {
+public class EquipeDAO {
 
     /**
      * Paramètres de connexion à la base de données MySQL
@@ -19,7 +20,7 @@ public class JoueurDAO {
     /**
      * Constructeur de la classe
      */
-    public JoueurDAO() {
+    public EquipeDAO() {
         // Chargement du pilote de bases de données
         try {
             Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL JDBC driver
@@ -35,7 +36,7 @@ public class JoueurDAO {
      * @param nouvArticle l'article à ajouter
      * @return le nombre de lignes ajoutées dans la table
      */
-    public int ajouter(Joueur nouvJoueur) {
+    public int ajouter(Equipe nouvEquipe) {
         Connection con = null;
         PreparedStatement ps = null;
         int retour = 0;
@@ -46,13 +47,10 @@ public class JoueurDAO {
             con = DriverManager.getConnection(URL, LOGIN, PASS);
             // Préparation de l'instruction SQL, chaque ? représente une valeur à communiquer dans l'insertion
             // Les getters permettent de récupérer les valeurs des attributs souhaités de nouvArticle
-            ps = con.prepareStatement("INSERT INTO joueur (id, nom, position,age, prix, equipe_id) VALUES (?, ?, ?,?, ?, ?)");
-            ps.setInt(1, nouvJoueur.getId());
-            ps.setString(2, nouvJoueur.getNom());
-            ps.setString(3, nouvJoueur.getPosition());
-            ps.setInt(4, nouvJoueur.getAge());
-            ps.setInt(5, nouvJoueur.getPrix());
-            ps.setInt(6, nouvJoueur.getEquipe_id());
+            ps = con.prepareStatement("INSERT INTO equipe (id, nom, solde) VALUES (?, ?, ?)");
+            ps.setInt(1, nouvEquipe.getId());
+            ps.setString(2, nouvEquipe.getNom());
+            ps.setInt(3, nouvEquipe.getSolde());
 
             // Exécution de la requête
             retour = ps.executeUpdate();
@@ -77,23 +75,23 @@ public class JoueurDAO {
      * @return l'article
      * @return null si aucun article ne correspond à cette référence
      */
-    public Joueur getJoueur(int id) {
+    public Equipe getEquipe(int id) {
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
-        Joueur retour = null;
+        Equipe retour = null;
 
         // Connexion à la base de données
         try {
             con = DriverManager.getConnection(URL, LOGIN, PASS);
-            ps = con.prepareStatement("SELECT * FROM joueur WHERE id = ?");
+            ps = con.prepareStatement("SELECT * FROM equipe WHERE id = ?");
             ps.setInt(1, id);
 
             // On exécute la requête
             rs = ps.executeQuery();
             // Passe à la première (et unique) ligne retournée
             if (rs.next())
-                retour = new Joueur(rs.getInt("id"), rs.getString("nom"),rs.getString("position"),rs.getInt("age") , rs.getInt("prix"),rs.getInt("equipe_id"));
+                retour = new Equipe(rs.getInt("id"), rs.getString("nom"), rs.getInt("solde"));
 
         } catch (Exception ee) {
             ee.printStackTrace();
@@ -116,22 +114,22 @@ public class JoueurDAO {
      * Permet de récupérer tous les articles stockés dans la table article
      * @return une ArrayList d'Articles
      */
-    public List<Joueur> getListeJoueurs() {
+    public List<Equipe> getListeEquipes() {
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
-        List<Joueur> retour = new ArrayList<Joueur>();
+        List<Equipe> retour = new ArrayList<Equipe>();
 
         // Connexion à la base de données
         try {
             con = DriverManager.getConnection(URL, LOGIN, PASS);
-            ps = con.prepareStatement("SELECT * FROM joueur");
+            ps = con.prepareStatement("SELECT * FROM equipe");
 
             // On exécute la requête
             rs = ps.executeQuery();
             // On parcourt les lignes du résultat
             while (rs.next())
-                retour.add(new Joueur(rs.getInt("id"), rs.getString("nom"),rs.getString("position"),rs.getInt("age") , rs.getInt("prix"),rs.getInt("equipe_id")));
+                retour.add(new Equipe(rs.getInt("id"), rs.getString("nom"), rs.getInt("solde")));
 
         } catch (Exception ee) {
             ee.printStackTrace();
@@ -152,20 +150,20 @@ public class JoueurDAO {
 
     // Main permettant de tester la classe
     public static void main(String[] args) throws SQLException {
-        JoueurDAO joueurDAO = new JoueurDAO();
+        EquipeDAO equipeDAO = new EquipeDAO();
         // Test de la méthode ajouter
-        Joueur a = new Joueur("TEST","Att",25,15,1);
-        int retour = joueurDAO.ajouter(a);
+        Equipe a = new Equipe("Wydad.ac",150);
+        int retour = equipeDAO.ajouter(a);
 
         System.out.println(retour + " lignes ajoutées");
 
         // Test de la méthode getArticle
-        Joueur a2 = joueurDAO.getJoueur(1);
+        Equipe a2 = equipeDAO.getEquipe(1);
         System.out.println(a2);
 
         // Test de la méthode getListeArticles
-        List<Joueur> liste = joueurDAO.getListeJoueurs();
-        for (Joueur art : liste) {
+        List<Equipe> liste = equipeDAO.getListeEquipes();
+        for (Equipe art : liste) {
             System.out.println(art.toString());
         }
     }
