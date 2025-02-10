@@ -150,6 +150,27 @@ public class EquipeDAO {
         return retour;
     }
 
+    public void deleteEquipe(int id) {
+    	Connection con = null;
+        PreparedStatement ps = null;
+
+        try {
+            con = DriverManager.getConnection(URL, LOGIN, PASS);
+            String sql = "DELETE FROM equipe WHERE id = ?";
+            ps = con.prepareStatement(sql);
+            ps.setInt(1, id);
+
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            // Fermeture des ressources
+            try { if (ps != null) ps.close(); } catch (Exception e) {}
+            try { if (con != null) con.close(); } catch (Exception e) {}
+        }
+    }
+    
+    
     /**
      * Méthode principale pour tester la classe EquipeDAO.
      * @param args Arguments de la ligne de commande (non utilisés ici).

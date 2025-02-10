@@ -154,10 +154,88 @@ public class JoueurDAO {
         return retour;
     }
     
-    public void updatePlayer(Joueur player) {
-    	
+    public int updateJoueur(Joueur joueur) {
+        Connection con = null;
+        PreparedStatement ps = null;
+        int retour = 0;
+
+        // Connexion à la base de données
+        try {
+            // Tentative de connexion
+            con = DriverManager.getConnection(URL, LOGIN, PASS);
+
+            // Préparation de l'instruction SQL pour la mise à jour
+            ps = con.prepareStatement("UPDATE joueur SET nom = ?, prenom = ?, position = ?, age = ?, prix = ?, equipe_id = ? WHERE id = ?");
+            
+            // Attribution des valeurs
+            ps.setString(1, joueur.getNom());
+            ps.setString(2, joueur.getPrenom());
+            ps.setString(3, joueur.getPosition());
+            ps.setInt(4, joueur.getAge());
+            ps.setInt(5, joueur.getPrix());
+            ps.setInt(6, joueur.getEquipe_id());
+            ps.setInt(7, joueur.getId());
+
+            // Exécution de la requête
+            retour = ps.executeUpdate();
+
+        } catch (Exception ee) {
+            ee.printStackTrace();
+        } finally {
+            // Fermeture des ressources
+            try {
+                if (ps != null) ps.close();
+            } catch (Exception ignored) {}
+            try {
+                if (con != null) con.close();
+            } catch (Exception ignored) {}
+        }
+        return retour;
     }
 
+
+    /**
+     * Récupère les joueurs correspondant à un filtre textuel.
+     * @param queryString Le texte de recherche.
+     * @return Une liste de joueurs correspondant au filtre.
+     */
+    public List<Joueur> getJoueursByFilter(String queryString) {
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        List<Joueur> joueurs = new ArrayList<>();
+
+        try {
+            con = DriverManager.getConnection(URL, LOGIN, PASS);
+            String sql = "SELECT * FROM joueur WHERE nom LIKE ? OR prenom LIKE ? OR position LIKE ?";
+            ps = con.prepareStatement(sql);
+            ps.setString(1, "%" + queryString + "%");
+            ps.setString(2, "%" + queryString + "%");
+            ps.setString(3, "%" + queryString + "%");
+
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                joueurs.add(new Joueur(
+                    rs.getInt("id"),
+                    rs.getString("nom"),
+                    rs.getString("prenon"),
+                    rs.getString("position"),
+                    rs.getInt("age"),
+                    rs.getInt("prix"),
+                    rs.getInt("equipe_id")
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            // Fermeture des ressources
+            try { if (rs != null) rs.close(); } catch (Exception e) {}
+            try { if (ps != null) ps.close(); } catch (Exception e) {}
+            try { if (con != null) con.close(); } catch (Exception e) {}
+        }
+        return joueurs;
+    }
+    
     // Main permettant de tester la classe
     public static void main(String[] args) throws SQLException {
         JoueurDAO joueurDAO = new JoueurDAO();
