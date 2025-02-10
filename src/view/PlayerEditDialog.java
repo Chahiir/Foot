@@ -11,6 +11,7 @@ import java.awt.event.*;
 
 public class PlayerEditDialog extends JDialog {
     private JTextField nomField;
+    private JTextField prenomField;
     private JTextField positionField;
     private JTextField ageField;
     private JTextField prixField;
@@ -28,6 +29,11 @@ public class PlayerEditDialog extends JDialog {
         add(new JLabel("Nom:"));
         nomField = new JTextField(joueur.getNom());
         add(nomField);
+
+        setLayout(new GridLayout(0, 2, 10, 10));
+        add(new JLabel("Prenom:"));
+        prenomField = new JTextField(joueur.getPrenom());
+        add(prenomField);
 
         add(new JLabel("Position:"));
         positionField = new JTextField(joueur.getPosition());

@@ -33,8 +33,8 @@ public class ButtonEditor extends AbstractCellEditor implements TableCellEditor 
 
     public Component getTableCellEditorComponent(JTable table, Object value,
                                                  boolean isSelected, int row, int column) {
-        editButton.setTargetId(row);  // Update button with the current row ID
-        deleteButton.setTargetId(row);
+        editButton.setTargetId((int)value);  // Update button with the current row ID
+        deleteButton.setTargetId((int)value);
         return panel;
     }
 

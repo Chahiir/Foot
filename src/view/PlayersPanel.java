@@ -13,6 +13,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
+import controller.Joueur;
 import service.interfaces.JoueurService;
 import service.interfaces.PlayerDataListener;
 import view.composent.AddPlayerButton;
@@ -91,18 +92,18 @@ public class PlayersPanel extends JPanel implements PlayerDataListener{
     private void reloadData() {
         model.setRowCount(0); // Efface les données existantes
         joueurService.getAllPlayers().forEach((joueur) -> {
-            addRowData(joueur.getNom(), joueur.getNom(), joueur.getPosition());
+            addRowData(joueur);
         });
 	}
     
 
 	private void loadData() {
         joueurService.getAllPlayers().forEach((joueur) -> {
-            addRowData(joueur.getNom(), joueur.getNom(), joueur.getPosition());
+            addRowData(joueur);
         });
 	}
     
-	private void addRowData(String nom, String prenom, String poste) {
-        model.addRow(new Object[]{nom, prenom, poste, ""});
+	private void addRowData(Joueur joueur) {
+        model.addRow(new Object[]{joueur.getNom(), joueur.getPrenom(), joueur.getPosition(), joueur.getId()});
     }
 }
