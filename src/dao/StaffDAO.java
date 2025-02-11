@@ -3,7 +3,9 @@ package dao;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import config.ConfigReader;
 import controller.Staff;
 /**
  * Classe d'accès aux données contenues dans la table Equipe
@@ -15,14 +17,18 @@ public class StaffDAO {
      * Paramètres de connexion à la base de données MySQL
      * URL, LOGIN et PASS sont des constantes
      */
-    final static String URL = "jdbc:mysql://localhost:3306/footmanager"; // Replace with your database name
-    final static String LOGIN = "root"; // Replace with your MySQL username
-    final static String PASS = "root"; // Replace with your MySQL password
+	private final String URL;
+	private final String LOGIN;
+	private final String PASS ;
 
     /**
      * Constructeur de la classe
      */
     public StaffDAO() {
+    	Map<String, String> config = ConfigReader.readConfig("./config.txt");
+        this.URL = config.get("url");
+        this.LOGIN = config.get("username");
+        this.PASS = config.get("password");
         // Chargement du pilote de bases de données
         try {
             Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL JDBC driver

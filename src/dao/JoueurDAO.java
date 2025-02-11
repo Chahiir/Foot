@@ -3,7 +3,9 @@ package dao;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import config.ConfigReader;
 import controller.Joueur;
 /**
  * Classe d'accès aux données contenues dans la table Equipe
@@ -15,14 +17,18 @@ public class JoueurDAO {
      * Paramètres de connexion à la base de données MySQL
      * URL, LOGIN et PASS sont des constantes
      */
-    final static String URL = "jdbc:mysql://localhost:3306/footmanager"; // Replace with your database name
-    final static String LOGIN = "root"; // Replace with your MySQL username
-    final static String PASS = "root"; // Replace with your MySQL password
+	private final String URL;
+	private final String LOGIN;
+	private final String PASS ;
 
     /**
      * Constructeur de la classe
      */
     public JoueurDAO() {
+    	Map<String, String> config = ConfigReader.readConfig("./config.txt");
+        this.URL = config.get("url");
+        this.LOGIN = config.get("username");
+        this.PASS = config.get("password");
         // Chargement du pilote de bases de données
         try {
             Class.forName("com.mysql.cj.jdbc.Driver"); // MySQL JDBC driver
@@ -49,14 +55,15 @@ public class JoueurDAO {
             con = DriverManager.getConnection(URL, LOGIN, PASS);
             // Préparation de l'instruction SQL, chaque ? représente une valeur à communiquer dans l'insertion
             // Les getters permettent de récupérer les valeurs des attributs souhaités de nouvArticle
-            ps = con.prepareStatement("INSERT INTO joueur (id, nom,prenom, position,age, prix, equipe_id) VALUES (?, ?, ?, ?,?, ?, ?)");
+            ps = con.prepareStatement("INSERT INTO joueur (id, nom,prenom, position,age, prix,aVendre, equipe_id) VALUES (?, ?,?, ?, ?,?, ?, ?)");
             ps.setInt(1, nouvJoueur.getId());
             ps.setString(2, nouvJoueur.getNom());
             ps.setString(3, nouvJoueur.getPrenom());
             ps.setString(4, nouvJoueur.getPosition());
             ps.setInt(5, nouvJoueur.getAge());
             ps.setInt(6, nouvJoueur.getPrix());
-            ps.setInt(7, nouvJoueur.getEquipe_id());
+            ps.setBoolean(7, nouvJoueur.isaVendre());
+            ps.setInt(8, nouvJoueur.getEquipe_id());
 
             // Exécution de la requête
             retour = ps.executeUpdate();
@@ -97,7 +104,7 @@ public class JoueurDAO {
             rs = ps.executeQuery();
             // Passe à la première (et unique) ligne retournée
             if (rs.next())
-                retour = new Joueur(rs.getInt("id"), rs.getString("nom"),rs.getString("prenom"), rs.getString("position"),rs.getInt("age") , rs.getInt("prix"),rs.getInt("equipe_id"));
+                retour = new Joueur(rs.getInt("id"), rs.getString("nom"),rs.getString("prenom"), rs.getString("position"),rs.getInt("age") , rs.getInt("prix"),rs.getBoolean("aVendre"),rs.getInt("equipe_id"));
 
         } catch (Exception ee) {
             ee.printStackTrace();
@@ -135,7 +142,7 @@ public class JoueurDAO {
             rs = ps.executeQuery();
             // On parcourt les lignes du résultat
             while (rs.next())
-                retour.add(new Joueur(rs.getInt("id"), rs.getString("nom"),rs.getString("prenom"),rs.getString("position"),rs.getInt("age") , rs.getInt("prix"),rs.getInt("equipe_id")));
+                retour.add(new Joueur(rs.getInt("id"), rs.getString("nom"),rs.getString("prenom"),rs.getString("position"),rs.getInt("age") , rs.getInt("prix"),rs.getBoolean("aVendre"),rs.getInt("equipe_id")));
 
         } catch (Exception ee) {
             ee.printStackTrace();
@@ -154,6 +161,41 @@ public class JoueurDAO {
         return retour;
     }
     
+    
+    public List<Joueur> getListeJoueursAVendre(){
+    	 Connection con = null;
+         PreparedStatement ps = null;
+         ResultSet rs = null;
+         List<Joueur> retour = new ArrayList<Joueur>();
+
+         // Connexion à la base de données
+         try {
+             con = DriverManager.getConnection(URL, LOGIN, PASS);
+             ps = con.prepareStatement("SELECT * FROM joueur WHERE aVendre = true");
+
+             // On exécute la requête
+             rs = ps.executeQuery();
+             // On parcourt les lignes du résultat
+             while (rs.next())
+                 retour.add(new Joueur(rs.getInt("id"), rs.getString("nom"),rs.getString("prenom"),rs.getString("position"),rs.getInt("age") , rs.getInt("prix"),rs.getBoolean("aVendre"),rs.getInt("equipe_id")));
+
+         } catch (Exception ee) {
+             ee.printStackTrace();
+         } finally {
+             // Fermeture du rs, du preparedStatement et de la connexion
+             try {
+                 if (rs != null) rs.close();
+             } catch (Exception t) {}
+             try {
+                 if (ps != null) ps.close();
+             } catch (Exception t) {}
+             try {
+                 if (con != null) con.close();
+             } catch (Exception t) {}
+         }
+         return retour;
+    }
+    
     public int updateJoueur(Joueur joueur) {
         Connection con = null;
         PreparedStatement ps = null;
@@ -165,7 +207,7 @@ public class JoueurDAO {
             con = DriverManager.getConnection(URL, LOGIN, PASS);
 
             // Préparation de l'instruction SQL pour la mise à jour
-            ps = con.prepareStatement("UPDATE joueur SET nom = ?, prenom = ?, position = ?, age = ?, prix = ?, equipe_id = ? WHERE id = ?");
+            ps = con.prepareStatement("UPDATE joueur SET nom = ?, prenom = ?, position = ?, age = ?, prix = ?, aVendre = ?, equipe_id = ? WHERE id = ?");
             
             // Attribution des valeurs
             ps.setString(1, joueur.getNom());
@@ -173,8 +215,9 @@ public class JoueurDAO {
             ps.setString(3, joueur.getPosition());
             ps.setInt(4, joueur.getAge());
             ps.setInt(5, joueur.getPrix());
-            ps.setInt(6, joueur.getEquipe_id());
-            ps.setInt(7, joueur.getId());
+            ps.setBoolean(6, joueur.isaVendre());
+            ps.setInt(7, joueur.getEquipe_id());
+            ps.setInt(8, joueur.getId());
 
             // Exécution de la requête
             retour = ps.executeUpdate();
@@ -222,6 +265,7 @@ public class JoueurDAO {
                     rs.getString("position"),
                     rs.getInt("age"),
                     rs.getInt("prix"),
+                    rs.getBoolean("aVendre"),
                     rs.getInt("equipe_id")
                 ));
             }

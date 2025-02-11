@@ -1,7 +1,10 @@
 package service.interfaces;
 
+import dao.EquipeDAO;
 import dao.JoueurDAO;
 import java.util.List;
+
+import controller.Equipe;
 import controller.Joueur;
 
 public class JoueurService {
@@ -44,5 +47,57 @@ public class JoueurService {
         joueur.updateJoueur(player);
     }
 
+    /**
+     * Ajout d'un joueur dans la BDD
+     * 
+     * @param newPlayer le joueur a ajouter
+     */
+    public void addPlayer(Joueur newPlayer) {
+    	JoueurDAO joueurDAO = new JoueurDAO();
+    	joueurDAO.ajouter(newPlayer);
+    }
+    /**
+     * marquer un joueur a vendre
+     * @param id
+     */
     	
+    public void markPlayerToSell(int id) {
+    	JoueurDAO joueurDAO = new JoueurDAO();
+    	joueurDAO.getJoueur(id).setaVendre(true);;
+    }
+    
+    /**
+     * vendre un joueur a une autre equipe	
+     * @param playerId
+     * @param newTeamId
+     * @return
+     */
+    public boolean transferPlayer(int playerId, int newTeamId) {
+    	
+    	EquipeDAO equipeDAO = new EquipeDAO();
+    	Equipe equipe = equipeDAO.getEquipe(newTeamId);
+    	JoueurDAO joueurDAO = new JoueurDAO();
+    	Joueur joueur = joueurDAO.getJoueur(playerId);
+    	Equipe oldEquipe = equipeDAO.getEquipe(joueur.getEquipe_id());
+    	
+    	if(equipe.getSolde() >= joueur.getPrix()) {
+    		oldEquipe.setSolde(oldEquipe.getSolde()+joueur.getPrix());
+    		equipe.setSolde(equipe.getSolde()- joueur.getPrix());
+    		joueur.setEquipe_id(newTeamId);
+        	joueur.setaVendre(false);
+        	return true;
+    	}else {
+    		return false;
+    	}
+        	
+    }
+    
+    /**
+     * liste de tous les joueurs a vendre
+     * @return
+     */
+    public List<Joueur> getPlayerToSell(){
+    	JoueurDAO joueurDAO = new JoueurDAO();
+    	return joueurDAO.getListeJoueursAVendre();
+    }
 }

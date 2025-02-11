@@ -40,6 +40,11 @@ public class Joueur {
     private int prix;
 
     /**
+     * est-ce que le joueur est a vendre
+     * 
+     */
+    private boolean aVendre;
+    /**
      * Identifiant de l'équipe à laquelle le joueur appartient.
      */
     private int equipe_id;
@@ -53,16 +58,28 @@ public class Joueur {
      * @param prix Prix du joueur en millions d'euros.
      * @param equipe_id Identifiant de l'équipe à laquelle le joueur appartient.
      */
-    public Joueur(int id, String nom,String prenom, String position, int age, int prix, int equipe_id) {
+    public Joueur(int id, String nom,String prenom, String position, int age, int prix, boolean aVendre, int equipe_id) {
         this.id = id;
         this.nom = nom;
         this.prenom = prenom;
         this.position = position;
         this.age = age;
         this.prix = prix;
+        this.aVendre = aVendre;
         this.equipe_id = equipe_id;
     }
-
+    
+    /**
+     * Constructeur par defaut sans parametre
+     */
+    public Joueur() {
+    	this.nom = "";
+    	this.prenom = "";
+    	this.position = "";
+    	this.age = 0;
+    	this.prix = 0;
+    }
+    
     /**
      * Constructeur pour initialiser un joueur sans spécifier l'identifiant.
      * @param nom Nom du joueur.
@@ -154,6 +171,20 @@ public class Joueur {
     }
 
     /**
+	 * @return the aVendre
+	 */
+	public boolean isaVendre() {
+		return aVendre;
+	}
+
+	/**
+	 * @param aVendre the aVendre to set
+	 */
+	public void setaVendre(boolean aVendre) {
+		this.aVendre = aVendre;
+	}
+
+	/**
      * Getter pour l'âge du joueur.
      * @return Âge du joueur.
      */
