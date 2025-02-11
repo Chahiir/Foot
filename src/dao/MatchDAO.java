@@ -1,6 +1,7 @@
 package dao;
 
 import java.sql.*;
+import java.time.LocalDate;
 
 import config.ConfigReader;
 import java.util.ArrayList;
@@ -224,6 +225,58 @@ public class MatchDAO {
             } catch (Exception t) {}
         }
         return retour;
+    }
+    
+    public void generateMatch(int equipe1Id, int equipe2Id, LocalDate matchDate) {
+        if (!EquipeDAO.hasEnoughPlayers(equipe1Id, 11) || !EquipeDAO.hasEnoughPlayers(equipe2Id, 11)) {
+            System.out.println("One or both teams do not have enough players.");
+            return;
+        }
+
+        try (Connection con = DriverManager.getConnection(URL, LOGIN, PASS)) {
+            con.setAutoCommit(false); // Start transaction
+
+            // Insert match into the `match` table
+            String insertMatchSql = "INSERT INTO match (date, adversaire_id, equipe_id) VALUES (?, ?, ?)";
+            int matchId;
+            try (PreparedStatement ps = con.prepareStatement(insertMatchSql, Statement.RETURN_GENERATED_KEYS)) {
+                ps.setDate(1, Date.valueOf(matchDate));
+                ps.setInt(2, equipe2Id);
+                ps.setInt(3, equipe1Id);
+                ps.executeUpdate();
+
+                try (ResultSet rs = ps.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        matchId = rs.getInt(1);
+                    } else {
+                        throw new SQLException("Failed to retrieve match ID.");
+                    }
+                }
+            }
+
+            // Generate a logical score
+            int scoreEquipe1 = ResultatDAO.generateScore();
+            int scoreEquipe2 = ResultatDAO.generateScore();
+
+            // Insert result into the `resultat` table
+            String insertResultSql = "INSERT INTO resultat (score_equipe, score_adversaire, match_id) VALUES (?, ?, ?)";
+            try (PreparedStatement ps = con.prepareStatement(insertResultSql)) {
+                ps.setInt(1, scoreEquipe1);
+                ps.setInt(2, scoreEquipe2);
+                ps.setInt(3, matchId);
+                ps.executeUpdate();
+            }
+
+            // Insert players into the `composition` table
+            CompositionDAO.insertPlayersIntoComposition(con, equipe1Id, matchId);
+            CompositionDAO.insertPlayersIntoComposition(con, equipe2Id, matchId);
+
+            con.commit(); // Commit transaction
+            System.out.println("Match generated successfully. Match ID: " + matchId);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
     
     

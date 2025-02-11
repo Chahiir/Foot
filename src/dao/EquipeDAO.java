@@ -1,6 +1,7 @@
 package dao;
 
 import java.sql.*;
+
 import config.ConfigReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -211,6 +212,31 @@ public class EquipeDAO {
             try { if (con != null) con.close(); } catch (Exception e) {}
         }
     }
+    
+    
+    public static boolean hasEnoughPlayers(int equipeId, int requiredPlayers) {
+        String sql = "SELECT COUNT(*) FROM joueur WHERE equipe_id = ?";
+        try (Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/footmanager", "root", "root");
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, equipeId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) >= requiredPlayers;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
+    
+    
+
+    
+
+    
+    
     
     
     /**

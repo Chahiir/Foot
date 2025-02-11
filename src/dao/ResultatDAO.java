@@ -153,6 +153,11 @@ public class ResultatDAO {
         }
         return retour;
     }
+    
+    public static int generateScore() {
+        // Generate a random score between 0 and 5
+        return (int) (Math.random() * 6);
+    }
 
     public void deleteResultat(int id) {
     	Connection con = null;

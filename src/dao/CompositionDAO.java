@@ -119,7 +119,23 @@ public class CompositionDAO {
     }
     
     
-    
+    public static void insertPlayersIntoComposition(Connection con, int equipeId, int matchId) throws SQLException {
+        String selectPlayersSql = "SELECT id FROM joueur WHERE equipe_id = ? LIMIT 11";
+        String insertCompositionSql = "INSERT INTO composition (joueur_id, match_id) VALUES (?, ?)";
+
+        try (PreparedStatement selectPs = con.prepareStatement(selectPlayersSql);
+             PreparedStatement insertPs = con.prepareStatement(insertCompositionSql)) {
+            selectPs.setInt(1, equipeId);
+            try (ResultSet rs = selectPs.executeQuery()) {
+                while (rs.next()) {
+                    int joueurId = rs.getInt("id");
+                    insertPs.setInt(1, joueurId);
+                    insertPs.setInt(2, matchId);
+                    insertPs.executeUpdate();
+                }
+            }
+        }
+    }
 
     public void deleteComposition(int id) {
     	Connection con = null;
