@@ -1,27 +1,15 @@
 package service.interfaces;
 
 import dao.EquipeDAO;
+import dao.HistoryDAO;
 import dao.JoueurDAO;
-
-import java.util.ArrayList;
 import java.util.List;
 
 import controller.Equipe;
+import controller.History;
 import controller.Joueur;
 
 public class JoueurService {
-
-    private List<PlayerDataListener> listeners = new ArrayList<>(); //pour emettre un event lors d'un changement de données
-
-    public void addDataListener(PlayerDataListener listener) {
-        listeners.add(listener);
-    }
-
-    public void notifyDataChanged() {
-        for (PlayerDataListener listener : listeners) {
-            listener.onDataChanged();
-        }
-    }
 
     /**
      * Récupère tous les joueurs de la base de données.
@@ -59,7 +47,6 @@ public class JoueurService {
     public void updatePlayer(Joueur player) {
         JoueurDAO joueur = new JoueurDAO();
         joueur.updateJoueur(player);
-        notifyDataChanged();
     }
 
     /**
@@ -94,12 +81,13 @@ public class JoueurService {
     	JoueurDAO joueurDAO = new JoueurDAO();
     	Joueur joueur = joueurDAO.getJoueur(playerId);
     	Equipe oldEquipe = equipeDAO.getEquipe(joueur.getEquipe_id());
-    	
+    	HistoryDAO history = new HistoryDAO();
     	if(equipe.getSolde() >= joueur.getPrix()) {
     		oldEquipe.setSolde(oldEquipe.getSolde()+joueur.getPrix());
     		equipe.setSolde(equipe.getSolde()- joueur.getPrix());
     		joueur.setEquipe_id(newTeamId);
         	joueur.setaVendre(false);
+        	history.ajouter(new History(oldEquipe.getId(),equipe.getId(),joueur.getId()));
         	return true;
     	}else {
     		return false;
