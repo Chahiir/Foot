@@ -6,13 +6,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import controller.Resultat;
+import controller.Composition;
 /**
  * Classe d'accès aux données contenues dans la table Equipe.
  * Permet d'effectuer des opérations CRUD (Create, Read, Update, Delete) sur la table Equipe.
  * @version 1.1
  */
-public class ResultatDAO {
+public class CompositionDAO {
 
     /**
      * Paramètres de connexion à la base de données MySQL.
@@ -26,7 +26,7 @@ public class ResultatDAO {
      * Constructeur de la classe.
      * Charge le pilote de base de données MySQL.
      */
-    public ResultatDAO() {
+    public CompositionDAO() {
     	Map<String, String> config = ConfigReader.readConfig("./config.txt");
         this.URL = config.get("url");
         this.LOGIN = config.get("username");
@@ -44,7 +44,7 @@ public class ResultatDAO {
      * @param nouvEquipe L'équipe à ajouter.
      * @return Le nombre de lignes ajoutées dans la table.
      */
-    public int ajouter(Resultat nouvResultat) {
+    public int ajouter(Composition nouvComp) {
         Connection con = null;
         PreparedStatement ps = null;
         int retour = 0;
@@ -53,11 +53,10 @@ public class ResultatDAO {
             // Connexion à la base de données
             con = DriverManager.getConnection(URL, LOGIN, PASS);
             // Préparation de la requête SQL
-            ps = con.prepareStatement("INSERT INTO resultat (id,score_equipe, score_adversaire, match_id) VALUES (?, ?, ?, ?)");
-            ps.setInt(1, nouvResultat.getId());
-            ps.setInt(2, nouvResultat.getScore_equipe());
-            ps.setInt(3, nouvResultat.getScore_adversaire());
-            ps.setInt(4, nouvResultat.getMatch_id());
+            ps = con.prepareStatement("INSERT INTO composition (id,joueur_id, match_id) VALUES (?, ?, ?)");
+            ps.setInt(1, nouvComp.getId());
+            ps.setInt(2, nouvComp.getJoueur_id());
+            ps.setInt(3, nouvComp.getMatch_id());
 
 
             // Exécution de la requête
@@ -82,23 +81,24 @@ public class ResultatDAO {
      * Permet de récupérer toutes les équipes stockées dans la table equipe.
      * @return Une ArrayList contenant toutes les équipes.
      */
-    public List<Resultat> getAllResultat() {
+    public List<Composition> getCompositionMatch(int id) {
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
-        List<Resultat> retour = new ArrayList<>();
+        List<Composition> retour = new ArrayList<>();
 
         try {
             // Connexion à la base de données
             con = DriverManager.getConnection(URL, LOGIN, PASS);
             // Préparation de la requête SQL
-            ps = con.prepareStatement("SELECT * FROM resultat");
-
+            ps = con.prepareStatement("SELECT * FROM composition WHERE match_id = ?");
+            ps.setInt(1, id);
+            
             // Exécution de la requête
             rs = ps.executeQuery();
             // Parcours des résultats
             while (rs.next()) {
-                retour.add(new Resultat(rs.getInt("id"), rs.getInt("score_equipe"), rs.getInt("score_adversaire"), rs.getInt("match_id")));
+                retour.add(new Composition(rs.getInt("id"), rs.getInt("joueur_id"), rs.getInt("match_id")));
             }
 
         } catch (Exception e) {
@@ -119,48 +119,15 @@ public class ResultatDAO {
     }
     
     
-    public Resultat getResultat(int id) {
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        Resultat retour = null;
+    
 
-        // Connexion à la base de données
-        try {
-            con = DriverManager.getConnection(URL, LOGIN, PASS);
-            ps = con.prepareStatement("SELECT * FROM resultat WHERE id = ?");
-            ps.setInt(1, id);
-
-            // On exécute la requête
-            rs = ps.executeQuery();
-            // Passe à la première (et unique) ligne retournée
-            if (rs.next())
-                retour = new Resultat(rs.getInt("id"), rs.getInt("score_equipe"), rs.getInt("score_adversaire"), rs.getInt("match_id"));
-
-        } catch (Exception ee) {
-            ee.printStackTrace();
-        } finally {
-            // Fermeture du ResultSet, du PreparedStatement et de la Connection
-            try {
-                if (rs != null) rs.close();
-            } catch (Exception t) {}
-            try {
-                if (ps != null) ps.close();
-            } catch (Exception t) {}
-            try {
-                if (con != null) con.close();
-            } catch (Exception t) {}
-        }
-        return retour;
-    }
-
-    public void deleteResultat(int id) {
+    public void deleteComposition(int id) {
     	Connection con = null;
         PreparedStatement ps = null;
 
         try {
             con = DriverManager.getConnection(URL, LOGIN, PASS);
-            String sql = "DELETE FROM resultat WHERE id = ?";
+            String sql = "DELETE FROM composition WHERE id = ?";
             ps = con.prepareStatement(sql);
             ps.setInt(1, id);
 

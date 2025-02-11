@@ -116,6 +116,43 @@ public class EquipeDAO {
         }
         return retour;
     }
+    
+    
+    public int updateEquipe(Equipe equipe) {
+        Connection con = null;
+        PreparedStatement ps = null;
+        int retour = 0;
+
+        // Connexion à la base de données
+        try {
+            // Tentative de connexion
+            con = DriverManager.getConnection(URL, LOGIN, PASS);
+
+            // Préparation de l'instruction SQL pour la mise à jour
+            ps = con.prepareStatement("UPDATE equipe SET nom = ?, solde = ? WHERE id = ?");
+            
+            // Attribution des valeurs
+            ps.setString(1, equipe.getNom());
+            ps.setInt(2, equipe.getSolde());
+            
+
+            // Exécution de la requête
+            retour = ps.executeUpdate();
+
+        } catch (Exception ee) {
+            ee.printStackTrace();
+        } finally {
+            // Fermeture des ressources
+            try {
+                if (ps != null) ps.close();
+            } catch (Exception ignored) {}
+            try {
+                if (con != null) con.close();
+            } catch (Exception ignored) {}
+        }
+        return retour;
+    }
+
 
     /**
      * Permet de récupérer toutes les équipes stockées dans la table equipe.

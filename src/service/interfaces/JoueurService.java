@@ -65,7 +65,10 @@ public class JoueurService {
     	
     public void markPlayerToSell(int id) {
     	JoueurDAO joueurDAO = new JoueurDAO();
-    	joueurDAO.getJoueur(id).setaVendre(true);;
+    	Joueur joueur = joueurDAO.getJoueur(id);
+    	joueur.setaVendre(true);
+    	joueurDAO.updateJoueur(joueur);
+
     }
     
     /**
@@ -88,6 +91,9 @@ public class JoueurService {
     		joueur.setEquipe_id(newTeamId);
         	joueur.setaVendre(false);
         	history.ajouter(new History(oldEquipe.getId(),equipe.getId(),joueur.getId()));
+        	joueurDAO.updateJoueur(joueur);
+        	equipeDAO.updateEquipe(oldEquipe);
+        	equipeDAO.updateEquipe(equipe);
         	return true;
     	}else {
     		return false;
