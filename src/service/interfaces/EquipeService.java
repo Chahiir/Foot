@@ -34,12 +34,15 @@ public class EquipeService {
     	JoueurDAO joueurDAO = new JoueurDAO();
     	Joueur joueur = joueurDAO.getJoueur(playerId);
     	joueur.setEquipe_id(equipeID);
+    	joueurDAO.updateJoueur(joueur);
     }
 
     public void removePlayerFromTeam(int playerId) {
     	JoueurDAO joueurDAO = new JoueurDAO();
     	Joueur joueur = joueurDAO.getJoueur(playerId);
     	joueur.setEquipe_id(0);
+    	joueurDAO.updateJoueur(joueur);
+
     }
 
     public void deleteTeamById( int teamId) {

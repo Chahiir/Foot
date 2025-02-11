@@ -6,13 +6,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import controller.Equipe;
+import controller.Resultat;
 /**
  * Classe d'accès aux données contenues dans la table Equipe.
  * Permet d'effectuer des opérations CRUD (Create, Read, Update, Delete) sur la table Equipe.
  * @version 1.1
  */
-public class EquipeDAO {
+public class ResultatDAO {
 
     /**
      * Paramètres de connexion à la base de données MySQL.
@@ -26,7 +26,7 @@ public class EquipeDAO {
      * Constructeur de la classe.
      * Charge le pilote de base de données MySQL.
      */
-    public EquipeDAO() {
+    public ResultatDAO() {
     	Map<String, String> config = ConfigReader.readConfig("./config.txt");
         this.URL = config.get("url");
         this.LOGIN = config.get("username");
@@ -44,7 +44,7 @@ public class EquipeDAO {
      * @param nouvEquipe L'équipe à ajouter.
      * @return Le nombre de lignes ajoutées dans la table.
      */
-    public int ajouter(Equipe nouvEquipe) {
+    public int ajouter(Resultat nouvResultat) {
         Connection con = null;
         PreparedStatement ps = null;
         int retour = 0;
@@ -53,10 +53,12 @@ public class EquipeDAO {
             // Connexion à la base de données
             con = DriverManager.getConnection(URL, LOGIN, PASS);
             // Préparation de la requête SQL
-            ps = con.prepareStatement("INSERT INTO equipe (id, nom, solde) VALUES (?, ?, ?)");
-            ps.setInt(1, nouvEquipe.getId());
-            ps.setString(2, nouvEquipe.getNom());
-            ps.setInt(3, nouvEquipe.getSolde());
+            ps = con.prepareStatement("INSERT INTO resultat (id,score_equipe, score_adversaire, match_id) VALUES (?, ?, ?, ?)");
+            ps.setInt(1, nouvResultat.getId());
+            ps.setInt(2, nouvResultat.getScore_equipe());
+            ps.setInt(3, nouvResultat.getScore_adversaire());
+            ps.setInt(4, nouvResultat.getMatch_id());
+
 
             // Exécution de la requête
             retour = ps.executeUpdate();
@@ -71,84 +73,6 @@ public class EquipeDAO {
             try {
                 if (con != null) con.close();
             } catch (Exception e) {}
-        }
-        return retour;
-    }
-
-    /**
-     * Permet de récupérer une équipe à partir de son identifiant.
-     * @param id L'identifiant de l'équipe à récupérer.
-     * @return L'équipe correspondante, ou null si aucune équipe ne correspond à cet identifiant.
-     */
-    public Equipe getEquipe(int id) {
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        Equipe retour = null;
-
-        try {
-            // Connexion à la base de données
-            con = DriverManager.getConnection(URL, LOGIN, PASS);
-            // Préparation de la requête SQL
-            ps = con.prepareStatement("SELECT * FROM equipe WHERE id = ?");
-            ps.setInt(1, id);
-
-            // Exécution de la requête
-            rs = ps.executeQuery();
-            // Récupération du résultat
-            if (rs.next()) {
-                retour = new Equipe(rs.getInt("id"), rs.getString("nom"), rs.getInt("solde"));
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            // Fermeture des ressources
-            try {
-                if (rs != null) rs.close();
-            } catch (Exception e) {}
-            try {
-                if (ps != null) ps.close();
-            } catch (Exception e) {}
-            try {
-                if (con != null) con.close();
-            } catch (Exception e) {}
-        }
-        return retour;
-    }
-    
-    
-    public int updateEquipe(Equipe equipe) {
-        Connection con = null;
-        PreparedStatement ps = null;
-        int retour = 0;
-
-        // Connexion à la base de données
-        try {
-            // Tentative de connexion
-            con = DriverManager.getConnection(URL, LOGIN, PASS);
-
-            // Préparation de l'instruction SQL pour la mise à jour
-            ps = con.prepareStatement("UPDATE equipe SET nom = ?, solde = ? WHERE id = ?");
-            
-            // Attribution des valeurs
-            ps.setString(1, equipe.getNom());
-            ps.setInt(2, equipe.getSolde());
-            
-
-            // Exécution de la requête
-            retour = ps.executeUpdate();
-
-        } catch (Exception ee) {
-            ee.printStackTrace();
-        } finally {
-            // Fermeture des ressources
-            try {
-                if (ps != null) ps.close();
-            } catch (Exception ignored) {}
-            try {
-                if (con != null) con.close();
-            } catch (Exception ignored) {}
         }
         return retour;
     }
@@ -158,23 +82,23 @@ public class EquipeDAO {
      * Permet de récupérer toutes les équipes stockées dans la table equipe.
      * @return Une ArrayList contenant toutes les équipes.
      */
-    public List<Equipe> getListeEquipes() {
+    public List<Resultat> getAllResultat() {
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
-        List<Equipe> retour = new ArrayList<>();
+        List<Resultat> retour = new ArrayList<>();
 
         try {
             // Connexion à la base de données
             con = DriverManager.getConnection(URL, LOGIN, PASS);
             // Préparation de la requête SQL
-            ps = con.prepareStatement("SELECT * FROM equipe");
+            ps = con.prepareStatement("SELECT * FROM resultat");
 
             // Exécution de la requête
             rs = ps.executeQuery();
             // Parcours des résultats
             while (rs.next()) {
-                retour.add(new Equipe(rs.getInt("id"), rs.getString("nom"), rs.getInt("solde")));
+                retour.add(new Resultat(rs.getInt("id"), rs.getInt("score_equipe"), rs.getInt("score_adversaire"), rs.getInt("match_id")));
             }
 
         } catch (Exception e) {
@@ -193,14 +117,50 @@ public class EquipeDAO {
         }
         return retour;
     }
+    
+    
+    public Resultat getResultat(int id) {
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        Resultat retour = null;
 
-    public void deleteEquipe(int id) {
+        // Connexion à la base de données
+        try {
+            con = DriverManager.getConnection(URL, LOGIN, PASS);
+            ps = con.prepareStatement("SELECT * FROM resultat WHERE id = ?");
+            ps.setInt(1, id);
+
+            // On exécute la requête
+            rs = ps.executeQuery();
+            // Passe à la première (et unique) ligne retournée
+            if (rs.next())
+                retour = new Resultat(rs.getInt("id"), rs.getInt("score_equipe"), rs.getInt("score_adversaire"), rs.getInt("match_id"));
+
+        } catch (Exception ee) {
+            ee.printStackTrace();
+        } finally {
+            // Fermeture du ResultSet, du PreparedStatement et de la Connection
+            try {
+                if (rs != null) rs.close();
+            } catch (Exception t) {}
+            try {
+                if (ps != null) ps.close();
+            } catch (Exception t) {}
+            try {
+                if (con != null) con.close();
+            } catch (Exception t) {}
+        }
+        return retour;
+    }
+
+    public void deleteResultat(int id) {
     	Connection con = null;
         PreparedStatement ps = null;
 
         try {
             con = DriverManager.getConnection(URL, LOGIN, PASS);
-            String sql = "DELETE FROM equipe WHERE id = ?";
+            String sql = "DELETE FROM resultat WHERE id = ?";
             ps = con.prepareStatement(sql);
             ps.setInt(1, id);
 
@@ -215,27 +175,5 @@ public class EquipeDAO {
     }
     
     
-    /**
-     * Méthode principale pour tester la classe EquipeDAO.
-     * @param args Arguments de la ligne de commande (non utilisés ici).
-     * @throws SQLException En cas d'erreur SQL.
-     */
-    public static void main(String[] args) throws SQLException {
-        EquipeDAO equipeDAO = new EquipeDAO();
-
-        // Test de la méthode ajouter
-        Equipe equipe1 = new Equipe("Wydad AC", 150);
-        int lignesAjoutees = equipeDAO.ajouter(equipe1);
-        System.out.println(lignesAjoutees + " lignes ajoutées");
-
-        // Test de la méthode getEquipe
-        Equipe equipe2 = equipeDAO.getEquipe(1);
-        System.out.println(equipe2);
-
-        // Test de la méthode getListeEquipes
-        List<Equipe> listeEquipes = equipeDAO.getListeEquipes();
-        for (Equipe equipe : listeEquipes) {
-            System.out.println(equipe.toString());
-        }
-    }
+   
 }

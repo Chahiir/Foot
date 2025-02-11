@@ -1,6 +1,7 @@
 package dao;
 
 import java.sql.*;
+
 import config.ConfigReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -154,6 +155,78 @@ public class MatchDAO {
         return retour;
     }
 
+    public Match getMatch(int equipe, int adversaire) {
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        Match retour = null;
+
+        // Connexion à la base de données
+        try {
+            con = DriverManager.getConnection(URL, LOGIN, PASS);
+            ps = con.prepareStatement("SELECT * FROM match WHERE equipe_id = ? AND adversaire_id = ?");
+            ps.setInt(1, equipe);
+            ps.setInt(2, adversaire);
+
+            // On exécute la requête
+            rs = ps.executeQuery();
+            // Passe à la première (et unique) ligne retournée
+            if (rs.next())
+                retour = new Match(rs.getInt("id"), rs.getDate("date").toLocalDate(), rs.getInt("adversaire_id"), rs.getInt("equipe_id"));
+
+        } catch (Exception ee) {
+            ee.printStackTrace();
+        } finally {
+            // Fermeture du ResultSet, du PreparedStatement et de la Connection
+            try {
+                if (rs != null) rs.close();
+            } catch (Exception t) {}
+            try {
+                if (ps != null) ps.close();
+            } catch (Exception t) {}
+            try {
+                if (con != null) con.close();
+            } catch (Exception t) {}
+        }
+        return retour;
+    }
+    
+    public Match getMatchByDate(Date date) {
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        Match retour = null;
+
+        // Connexion à la base de données
+        try {
+            con = DriverManager.getConnection(URL, LOGIN, PASS);
+            ps = con.prepareStatement("SELECT * FROM match WHERE date = ?");
+            ps.setDate(1, date);
+
+            // On exécute la requête
+            rs = ps.executeQuery();
+            // Passe à la première (et unique) ligne retournée
+            if (rs.next())
+                retour = new Match(rs.getInt("id"), rs.getDate("date").toLocalDate(), rs.getInt("adversaire_id"), rs.getInt("equipe_id"));
+
+        } catch (Exception ee) {
+            ee.printStackTrace();
+        } finally {
+            // Fermeture du ResultSet, du PreparedStatement et de la Connection
+            try {
+                if (rs != null) rs.close();
+            } catch (Exception t) {}
+            try {
+                if (ps != null) ps.close();
+            } catch (Exception t) {}
+            try {
+                if (con != null) con.close();
+            } catch (Exception t) {}
+        }
+        return retour;
+    }
+    
+    
     public void deleteMatch(int id) {
     	Connection con = null;
         PreparedStatement ps = null;
