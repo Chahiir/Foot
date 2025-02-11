@@ -1,19 +1,18 @@
 package dao;
 
 import java.sql.*;
-
 import config.ConfigReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import controller.Match;
+import controller.Resultat;
 /**
  * Classe d'accès aux données contenues dans la table Equipe.
  * Permet d'effectuer des opérations CRUD (Create, Read, Update, Delete) sur la table Equipe.
  * @version 1.1
  */
-public class MatchDAO {
+public class ResultatDAO {
 
     /**
      * Paramètres de connexion à la base de données MySQL.
@@ -27,7 +26,7 @@ public class MatchDAO {
      * Constructeur de la classe.
      * Charge le pilote de base de données MySQL.
      */
-    public MatchDAO() {
+    public ResultatDAO() {
     	Map<String, String> config = ConfigReader.readConfig("./config.txt");
         this.URL = config.get("url");
         this.LOGIN = config.get("username");
@@ -45,7 +44,7 @@ public class MatchDAO {
      * @param nouvEquipe L'équipe à ajouter.
      * @return Le nombre de lignes ajoutées dans la table.
      */
-    public int ajouter(Match nouvMatch) {
+    public int ajouter(Resultat nouvResultat) {
         Connection con = null;
         PreparedStatement ps = null;
         int retour = 0;
@@ -54,11 +53,11 @@ public class MatchDAO {
             // Connexion à la base de données
             con = DriverManager.getConnection(URL, LOGIN, PASS);
             // Préparation de la requête SQL
-            ps = con.prepareStatement("INSERT INTO match (id,date, adversaire_id, equipe_id) VALUES (?, ?, ?, ?)");
-            ps.setInt(1, nouvMatch.getId());
-            ps.setDate(2, java.sql.Date.valueOf(nouvMatch.getDate()));
-            ps.setInt(3, nouvMatch.getAdversaire());
-            ps.setInt(4, nouvMatch.getEquipe());
+            ps = con.prepareStatement("INSERT INTO resultat (id,score_equipe, score_adversaire, match_id) VALUES (?, ?, ?, ?)");
+            ps.setInt(1, nouvResultat.getId());
+            ps.setInt(2, nouvResultat.getScore_equipe());
+            ps.setInt(3, nouvResultat.getScore_adversaire());
+            ps.setInt(4, nouvResultat.getMatch_id());
 
 
             // Exécution de la requête
@@ -83,23 +82,23 @@ public class MatchDAO {
      * Permet de récupérer toutes les équipes stockées dans la table equipe.
      * @return Une ArrayList contenant toutes les équipes.
      */
-    public List<Match> getAllMatch() {
+    public List<Resultat> getAllResultat() {
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
-        List<Match> retour = new ArrayList<>();
+        List<Resultat> retour = new ArrayList<>();
 
         try {
             // Connexion à la base de données
             con = DriverManager.getConnection(URL, LOGIN, PASS);
             // Préparation de la requête SQL
-            ps = con.prepareStatement("SELECT * FROM match");
+            ps = con.prepareStatement("SELECT * FROM resultat");
 
             // Exécution de la requête
             rs = ps.executeQuery();
             // Parcours des résultats
             while (rs.next()) {
-                retour.add(new Match(rs.getInt("id"), rs.getDate("date").toLocalDate(), rs.getInt("adversaire_id"), rs.getInt("equipe_id")));
+                retour.add(new Resultat(rs.getInt("id"), rs.getInt("score_equipe"), rs.getInt("score_adversaire"), rs.getInt("match_id")));
             }
 
         } catch (Exception e) {
@@ -120,23 +119,23 @@ public class MatchDAO {
     }
     
     
-    public Match getMatch(int id) {
+    public Resultat getResultat(int id) {
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
-        Match retour = null;
+        Resultat retour = null;
 
         // Connexion à la base de données
         try {
             con = DriverManager.getConnection(URL, LOGIN, PASS);
-            ps = con.prepareStatement("SELECT * FROM match WHERE id = ?");
+            ps = con.prepareStatement("SELECT * FROM resultat WHERE id = ?");
             ps.setInt(1, id);
 
             // On exécute la requête
             rs = ps.executeQuery();
             // Passe à la première (et unique) ligne retournée
             if (rs.next())
-                retour = new Match(rs.getInt("id"), rs.getDate("date").toLocalDate(), rs.getInt("adversaire_id"), rs.getInt("equipe_id"));
+                retour = new Resultat(rs.getInt("id"), rs.getInt("score_equipe"), rs.getInt("score_adversaire"), rs.getInt("match_id"));
 
         } catch (Exception ee) {
             ee.printStackTrace();
@@ -155,85 +154,13 @@ public class MatchDAO {
         return retour;
     }
 
-    public Match getMatch(int equipe, int adversaire) {
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        Match retour = null;
-
-        // Connexion à la base de données
-        try {
-            con = DriverManager.getConnection(URL, LOGIN, PASS);
-            ps = con.prepareStatement("SELECT * FROM match WHERE equipe_id = ? AND adversaire_id = ?");
-            ps.setInt(1, equipe);
-            ps.setInt(2, adversaire);
-
-            // On exécute la requête
-            rs = ps.executeQuery();
-            // Passe à la première (et unique) ligne retournée
-            if (rs.next())
-                retour = new Match(rs.getInt("id"), rs.getDate("date").toLocalDate(), rs.getInt("adversaire_id"), rs.getInt("equipe_id"));
-
-        } catch (Exception ee) {
-            ee.printStackTrace();
-        } finally {
-            // Fermeture du ResultSet, du PreparedStatement et de la Connection
-            try {
-                if (rs != null) rs.close();
-            } catch (Exception t) {}
-            try {
-                if (ps != null) ps.close();
-            } catch (Exception t) {}
-            try {
-                if (con != null) con.close();
-            } catch (Exception t) {}
-        }
-        return retour;
-    }
-    
-    public Match getMatchByDate(Date date) {
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        Match retour = null;
-
-        // Connexion à la base de données
-        try {
-            con = DriverManager.getConnection(URL, LOGIN, PASS);
-            ps = con.prepareStatement("SELECT * FROM match WHERE date = ?");
-            ps.setDate(1, date);
-
-            // On exécute la requête
-            rs = ps.executeQuery();
-            // Passe à la première (et unique) ligne retournée
-            if (rs.next())
-                retour = new Match(rs.getInt("id"), rs.getDate("date").toLocalDate(), rs.getInt("adversaire_id"), rs.getInt("equipe_id"));
-
-        } catch (Exception ee) {
-            ee.printStackTrace();
-        } finally {
-            // Fermeture du ResultSet, du PreparedStatement et de la Connection
-            try {
-                if (rs != null) rs.close();
-            } catch (Exception t) {}
-            try {
-                if (ps != null) ps.close();
-            } catch (Exception t) {}
-            try {
-                if (con != null) con.close();
-            } catch (Exception t) {}
-        }
-        return retour;
-    }
-    
-    
-    public void deleteMatch(int id) {
+    public void deleteResultat(int id) {
     	Connection con = null;
         PreparedStatement ps = null;
 
         try {
             con = DriverManager.getConnection(URL, LOGIN, PASS);
-            String sql = "DELETE FROM match WHERE id = ?";
+            String sql = "DELETE FROM r WHERE id = ?";
             ps = con.prepareStatement(sql);
             ps.setInt(1, id);
 
