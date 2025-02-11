@@ -124,7 +124,39 @@ public class JoueurDAO {
     }
 
     
-    
+    public List<Joueur> getTeamJoueurs(int id){
+    	Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        List<Joueur> retour = new ArrayList<Joueur>();
+
+        // Connexion à la base de données
+        try {
+            con = DriverManager.getConnection(URL, LOGIN, PASS);
+            ps = con.prepareStatement("SELECT * FROM joueur WHERE equipe_id = ?");
+            ps.setInt(1, id);
+            // On exécute la requête
+            rs = ps.executeQuery();
+            // On parcourt les lignes du résultat
+            while (rs.next())
+                retour.add(new Joueur(rs.getInt("id"), rs.getString("nom"),rs.getString("prenom"),rs.getString("position"),rs.getInt("age") , rs.getInt("prix"),rs.getBoolean("aVendre"),rs.getInt("equipe_id")));
+
+        } catch (Exception ee) {
+            ee.printStackTrace();
+        } finally {
+            // Fermeture du rs, du preparedStatement et de la connexion
+            try {
+                if (rs != null) rs.close();
+            } catch (Exception t) {}
+            try {
+                if (ps != null) ps.close();
+            } catch (Exception t) {}
+            try {
+                if (con != null) con.close();
+            } catch (Exception t) {}
+        }
+        return retour;
+    }
     
     
     /**

@@ -118,10 +118,9 @@ public class EquipeDAO {
     }
     
     
-    public int updateEquipe(Equipe equipe) {
+    public void updateEquipe(Equipe equipe) {
         Connection con = null;
         PreparedStatement ps = null;
-        int retour = 0;
 
         // Connexion à la base de données
         try {
@@ -137,7 +136,7 @@ public class EquipeDAO {
             
 
             // Exécution de la requête
-            retour = ps.executeUpdate();
+            ps.executeUpdate();
 
         } catch (Exception ee) {
             ee.printStackTrace();
@@ -150,7 +149,6 @@ public class EquipeDAO {
                 if (con != null) con.close();
             } catch (Exception ignored) {}
         }
-        return retour;
     }
 
 

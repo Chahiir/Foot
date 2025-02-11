@@ -4,8 +4,7 @@ package service.interfaces;
 import controller.Equipe;
 import dao.EquipeDAO;
 
-import dao.JoueurDAO;
-import controller.Joueur;
+
 import java.util.List;
 
 public class EquipeService {
