@@ -36,6 +36,11 @@ public class JoueurService {
     }
 
     
+    public List<Joueur> getTeamPlayer(int id){
+    	JoueurDAO joueurDAO = new JoueurDAO();
+    	return joueurDAO.getTeamJoueurs(id);
+    }
+    
     public void addPlayerToTeam(int playerId, int equipeID) {
     	JoueurDAO joueurDAO = new JoueurDAO();
     	Joueur joueur = joueurDAO.getJoueur(playerId);
