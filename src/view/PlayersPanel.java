@@ -27,11 +27,11 @@ public class PlayersPanel extends JPanel implements PlayerDataListener{
     private DefaultTableModel model;
     private JoueurService joueurService;
     
-	public PlayersPanel() {
+	public PlayersPanel(JoueurService joueurService) {
 		super();
 
         //ajout de la couche service de gestion des joueurs
-        joueurService = new JoueurService();
+        this.joueurService = joueurService;
         joueurService.addDataListener(this);  // Enregistrez le panel comme listener
 
 		setLayout(new BorderLayout());

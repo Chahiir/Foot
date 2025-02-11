@@ -31,7 +31,7 @@ public class SellButton extends ActionButton {
     }
 
     private void performDeleteAction() {
-        joueurService.sellPlayerById(targetId);
+        joueurService.markPlayerToSell(targetId);
         System.out.println("Suppression de l'élément avec l'ID " + targetId + " en cours...");
     }
 }
