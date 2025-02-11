@@ -4,13 +4,17 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class DeleteButton extends ActionButton {
+import service.interfaces.JoueurService;
+
+public class SellButton extends ActionButton {
 	
 	private int targetId;
+    private JoueurService joueurService;
     
-	public DeleteButton(String label, int targetId) {
+	public SellButton(String label, int targetId, JoueurService joueurService) {
         super(label);
-        this.targetId = targetId;  // Initialize with specific row ID
+        this.targetId = targetId;  // Initialize with specific player ID
+        this.joueurService = joueurService; // Initialize with service Instance
         setBackground_color(new Color(231, 76, 60));
         pressed_background_color = background_color.darker();
         addActionListener(new ActionListener() {
@@ -27,6 +31,7 @@ public class DeleteButton extends ActionButton {
     }
 
     private void performDeleteAction() {
+        joueurService.sellPlayerById(targetId);
         System.out.println("Suppression de l'élément avec l'ID " + targetId + " en cours...");
     }
 }

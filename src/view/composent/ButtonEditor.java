@@ -8,31 +8,33 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 
+import service.interfaces.JoueurService;
+
 // Custom editor to handle actions in JTable cells
 public class ButtonEditor extends AbstractCellEditor implements TableCellEditor {
     private EditButton editButton;
-    private DeleteButton deleteButton;
+    private SellButton sellButton;
     private JPanel panel;
 
-    public ButtonEditor() {
+    public ButtonEditor(JoueurService joueurService) {
         panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        editButton = new EditButton("Modifier", -1);
-        deleteButton = new DeleteButton("Vendre", -1);
+        editButton = new EditButton("Modifier", -1, joueurService);
+        sellButton = new SellButton("Vendre", -1, joueurService);
         panel.add(editButton);
-        panel.add(deleteButton);
+        panel.add(sellButton);
 
         editButton.addActionListener(e -> {
             fireEditingStopped();  // Action handling logic
         });
-        deleteButton.addActionListener(e -> {
+        sellButton.addActionListener(e -> {
             fireEditingStopped();  // Action handling logic
         });
     }
 
     public Component getTableCellEditorComponent(JTable table, Object value,
                                                  boolean isSelected, int row, int column) {
-        editButton.setTargetId(row);  // Update button with the current row ID
-        deleteButton.setTargetId(row);
+        editButton.setTargetId((int)value);  // Update button with the current row ID
+        sellButton.setTargetId((int)value);
         return panel;
     }
 

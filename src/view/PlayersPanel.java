@@ -13,18 +13,27 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
+import controller.Joueur;
+import service.interfaces.JoueurService;
+import service.interfaces.PlayerDataListener;
 import view.composent.AddPlayerButton;
 import view.composent.BoldHeaderRenderer;
 import view.composent.ButtonEditor;
 import view.composent.ButtonRenderer;
 import view.composent.CustomCellRenderer;
 
-public class PlayersPanel extends JPanel {
+public class PlayersPanel extends JPanel implements PlayerDataListener{
 	private JTable table;
     private DefaultTableModel model;
+    private JoueurService joueurService;
     
 	public PlayersPanel() {
 		super();
+
+        //ajout de la couche service de gestion des joueurs
+        joueurService = new JoueurService();
+        joueurService.addDataListener(this);  // Enregistrez le panel comme listener
+
 		setLayout(new BorderLayout());
 		setBorder(new EmptyBorder(10, 10, 10, 10));
 		setBackground(new Color(0,0,0,Color.TRANSLUCENT));
@@ -33,7 +42,7 @@ public class PlayersPanel extends JPanel {
         JPanel northPanel = new JPanel(new BorderLayout());
         northPanel.setBackground(new Color(0,0,0,Color.TRANSLUCENT));
         northPanel.setBorder(new EmptyBorder(10,10,10,10));
-        AddPlayerButton addPlayerButton = new AddPlayerButton("Ajouter un joueur");
+        AddPlayerButton addPlayerButton = new AddPlayerButton("Ajouter un joueur", joueurService);
         addPlayerButton.setMinimumSize(new Dimension(20,30));
         addPlayerButton.setForeground(Color.WHITE);
         JTextField searchField = new JTextField(15);
@@ -59,8 +68,8 @@ public class PlayersPanel extends JPanel {
         for (int i = 0; i < table.getColumnCount() - 1; i++) {
             table.getColumnModel().getColumn(i).setCellRenderer(new CustomCellRenderer());
         }
-        table.getColumn("Actions").setCellRenderer(new ButtonRenderer());
-        table.getColumn("Actions").setCellEditor(new ButtonEditor());
+        table.getColumn("Actions").setCellRenderer(new ButtonRenderer(joueurService));
+        table.getColumn("Actions").setCellEditor(new ButtonEditor(joueurService));
         table.setRowHeight(40);
         table.setBackground(Color.white);
 
@@ -75,16 +84,26 @@ public class PlayersPanel extends JPanel {
         add(scrollPane, BorderLayout.CENTER);
 	}
 
-	private void loadData() {
-		addRowData("Dupont", "Antoine", "Milieu");
-        addRowData("Martin", "Lucas", "Attaquant");
-        addRowData("Leroy", "Pierre", "Défenseur");
-        addRowData("Bernard", "Mathieu", "Gardien");
-        addRowData("Dubois", "David", "Milieu");
+    @Override
+    public void onDataChanged() {
+        reloadData();  // Recharge les données lorsque le service notifie un changement
+    }
+
+    private void reloadData() {
+        model.setRowCount(0); // Efface les données existantes
+        joueurService.getAllPlayers().forEach((joueur) -> {
+            addRowData(joueur);
+        });
 	}
     
-	private void addRowData(String nom, String prenom, String poste) {
-        model.addRow(new Object[]{nom, prenom, poste, ""});
-    }
+
+	private void loadData() {
+        joueurService.getAllPlayers().forEach((joueur) -> {
+            addRowData(joueur);
+        });
+	}
     
+	private void addRowData(Joueur joueur) {
+        model.addRow(new Object[]{joueur.getNom(), joueur.getPrenom(), joueur.getPosition(), joueur.getId()});
+    }
 }
