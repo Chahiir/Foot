@@ -20,6 +20,23 @@ public class JoueurService {
         return joueur.getListeJoueurs();
     }
 
+    
+    public void addPlayerToTeam(int playerId, int equipeID) {
+    	JoueurDAO joueurDAO = new JoueurDAO();
+    	Joueur joueur = joueurDAO.getJoueur(playerId);
+    	joueur.setEquipe_id(equipeID);
+    	joueurDAO.updateJoueur(joueur);
+    }
+
+    public void removePlayerFromTeam(int playerId) {
+    	JoueurDAO joueurDAO = new JoueurDAO();
+    	Joueur joueur = joueurDAO.getJoueur(playerId);
+    	joueur.setEquipe_id(0);
+    	joueurDAO.updateJoueur(joueur);
+
+    }
+    
+    
     /**
      * Récupère un joueur par son identifiant.
      * @param id L'identifiant du joueur.

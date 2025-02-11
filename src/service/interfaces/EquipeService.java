@@ -30,20 +30,7 @@ public class EquipeService {
 		return equipeDAO.getListeEquipes();
 	}
 
-    public void addPlayerToTeam(int playerId, int equipeID) {
-    	JoueurDAO joueurDAO = new JoueurDAO();
-    	Joueur joueur = joueurDAO.getJoueur(playerId);
-    	joueur.setEquipe_id(equipeID);
-    	joueurDAO.updateJoueur(joueur);
-    }
-
-    public void removePlayerFromTeam(int playerId) {
-    	JoueurDAO joueurDAO = new JoueurDAO();
-    	Joueur joueur = joueurDAO.getJoueur(playerId);
-    	joueur.setEquipe_id(0);
-    	joueurDAO.updateJoueur(joueur);
-
-    }
+   
 
     public void deleteTeamById( int teamId) {
     	EquipeDAO equipeDAO = new EquipeDAO();
