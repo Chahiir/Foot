@@ -11,6 +11,7 @@ import controller.Equipe;
 import controller.History;
 import controller.Joueur;
 
+
 public class JoueurService {
 
     private List<PlayerDataListener> listeners = new ArrayList<>(); //pour emettre un event lors d'un changement de données
