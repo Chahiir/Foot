@@ -1,13 +1,25 @@
 package view;
 
 import java.awt.BorderLayout;
+import java.util.ArrayList;
 
 import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+import service.interfaces.EquipeService;
+import service.interfaces.JoueurService;
 
 
 public class MainFrame extends JFrame {
 
+    private ArrayList<JPanel> panels;
+    private JoueurService joueurService;
+    private EquipeService equipeService;
+    private JPanel currentVisiblePanel;
+
     public MainFrame() {
+        this.joueurService = new JoueurService();
+        this.equipeService = new EquipeService();
         // Création de la fenêtre principale
         setTitle("Gestion de l'Équipe");
         setSize(1000, 500); // Ajusté pour mieux s'adapter à tous les éléments
@@ -16,15 +28,29 @@ public class MainFrame extends JFrame {
         setLayout(new BorderLayout()); // Ajoute un espace entre les composants
 
         // Panneau West pour la navigation
-        add(new MenuPanel(0), BorderLayout.WEST);
+        add(new MenuPanel(this, 0), BorderLayout.WEST);
+
+        //initialisation des panneaux
+        this.panels = new ArrayList<>();
+        panels.add(new TeamManagementPanel(joueurService));
+        panels.add(new JPanel());
+        panels.add(new JPanel());
+        panels.add(new TransferPanel(joueurService, equipeService));
      
-        add(new TeamManagementPanel(), BorderLayout.CENTER);
+        currentVisiblePanel = panels.get(0);
+        add(currentVisiblePanel, BorderLayout.CENTER);
 
         setLocationRelativeTo(null);
         setVisible(true);
     }
 
-    
+    public void setSelectedPanel(int index){
+        remove(currentVisiblePanel); // Supprime l'ancien panneau
+        currentVisiblePanel = panels.get(index);
+        add(currentVisiblePanel, BorderLayout.CENTER);
+        revalidate(); // Met à jour l'affichage
+        repaint();
+    }
 
     public static void main(String[] args) {
         new MainFrame();

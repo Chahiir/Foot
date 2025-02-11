@@ -8,11 +8,15 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import service.interfaces.JoueurService;
 import view.composent.CustomTabbedPanel;
 
 public class TeamManagementPanel extends JPanel {
 
-	public TeamManagementPanel() {
+    private JoueurService joueurService;
+
+	public TeamManagementPanel(JoueurService joueurService) {
+        this.joueurService = joueurService;
         setLayout(new BorderLayout());
         setBorder(new EmptyBorder(10, 10, 10, 20));
         setBackground(Color.WHITE);
@@ -25,7 +29,7 @@ public class TeamManagementPanel extends JPanel {
 		title.setFont(new Font("Serif", Font.BOLD, 24));
         // Configuration du JTabbedPane
 		CustomTabbedPanel tabbedPane = new CustomTabbedPanel();
-        tabbedPane.addTab("Joueurs", new PlayersPanel());
+        tabbedPane.addTab("Joueurs", new PlayersPanel(joueurService));
         tabbedPane.addTab("Staff", new JPanel());
         tabbedPane.addTab("Composition d'équipe", new JPanel());
 
