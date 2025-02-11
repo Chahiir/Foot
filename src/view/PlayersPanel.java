@@ -42,7 +42,7 @@ public class PlayersPanel extends JPanel implements PlayerDataListener{
         JPanel northPanel = new JPanel(new BorderLayout());
         northPanel.setBackground(new Color(0,0,0,Color.TRANSLUCENT));
         northPanel.setBorder(new EmptyBorder(10,10,10,10));
-        AddPlayerButton addPlayerButton = new AddPlayerButton("Ajouter un joueur");
+        AddPlayerButton addPlayerButton = new AddPlayerButton("Ajouter un joueur", joueurService);
         addPlayerButton.setMinimumSize(new Dimension(20,30));
         addPlayerButton.setForeground(Color.WHITE);
         JTextField searchField = new JTextField(15);

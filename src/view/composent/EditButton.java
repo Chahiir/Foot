@@ -14,7 +14,7 @@ import view.PlayerEditDialog;
 public class EditButton extends ActionButton {
 	
 	private int targetId;
-    JoueurService joueurService;
+    private JoueurService joueurService;
     
     public EditButton(String label, int targetId, JoueurService joueurService) {
     	super(label);
