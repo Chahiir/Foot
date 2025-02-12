@@ -1,0 +1,14 @@
+Livrable 2 
+Binôme de développement : 
+Mathieu BELLEGUEULLE
+Anas Chahir
+
+Organisation du projet : 
+
+Nous avons pris le temps en début de sprint d'analyser ensemble le dossier de conception et de se répartir les tâches : notamment avec une division du type Backend (base de données, DAO, couche Service) / Frontend (Interface graphique, liaison)
+
+Nous avons uttiliser comme logiciel de source control gitHub : https://github.com/Chahiir/Foot
+
+Nous avons également beaucoup échanger par Discord pour coordonnées les développements. 
+
+Le résultat du sprint a cependant dépasser les contraintes horaires de plannification : en plus des 8h de cours, nous pensons avoir réaliser 8h de développement et 2h de finition et préparation du livrable par personne. 
