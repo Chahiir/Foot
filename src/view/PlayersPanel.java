@@ -14,6 +14,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
 import controller.Joueur;
+import service.interfaces.EquipeService;
 import service.interfaces.JoueurService;
 import service.interfaces.PlayerDataListener;
 import view.composent.AddPlayerButton;
@@ -26,12 +27,14 @@ public class PlayersPanel extends JPanel implements PlayerDataListener{
 	private JTable table;
     private DefaultTableModel model;
     private JoueurService joueurService;
+    private EquipeService equipeService;
     
-	public PlayersPanel(JoueurService joueurService) {
+	public PlayersPanel(JoueurService joueurService, EquipeService equipeService) {
 		super();
 
-        //ajout de la couche service de gestion des joueurs
+        //ajout de la couche service de gestion des joueurs et équipe
         this.joueurService = joueurService;
+        this.equipeService = equipeService;
         joueurService.addDataListener(this);  // Enregistrez le panel comme listener
 
 		setLayout(new BorderLayout());
@@ -92,14 +95,16 @@ public class PlayersPanel extends JPanel implements PlayerDataListener{
     private void reloadData() {
         model.setRowCount(0); // Efface les données existantes
         joueurService.getAllPlayers().forEach((joueur) -> {
-            addRowData(joueur);
+            if (joueur.getEquipe_id() == equipeService.getMonEquipe())
+                addRowData(joueur);
         });
 	}
     
 
 	private void loadData() {
         joueurService.getAllPlayers().forEach((joueur) -> {
-            addRowData(joueur);
+            if (joueur.getEquipe_id() == equipeService.getMonEquipe())
+                addRowData(joueur);
         });
 	}
     

@@ -4,15 +4,20 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import service.interfaces.EquipeService;
 import service.interfaces.JoueurService;
 
 public class TransferBuyButton extends ActionButton {
 	
 	private int targetId;
+    private JoueurService joueurService;
+    private EquipeService equipeService;
     
-    public TransferBuyButton(int targetId, JoueurService joueurService) {
+    public TransferBuyButton(int targetId, JoueurService joueurService, EquipeService equipeService) {
     	super("Acheter");
     	this.targetId = targetId;  // Initialize with specific row ID
+        this.joueurService = joueurService;
+        this.equipeService = equipeService;
     	setBackground_color(new Color(93, 173, 226));
     	border_color = new Color(200,200,200);
     	pressed_background_color = background_color.darker();
@@ -31,7 +36,7 @@ public class TransferBuyButton extends ActionButton {
     }
     
     private void performBuyAction() {
-        //joueurService.buyPlayerById(targetId);
+        joueurService.transferPlayer(targetId, equipeService.getMonEquipe());
         System.out.println("Achat du joueur avec l'ID " + targetId + " en cours...");
     }
 }

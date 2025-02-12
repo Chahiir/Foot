@@ -18,16 +18,8 @@ import service.interfaces.JoueurService;
 import view.composent.ActionButton;
 
 public class PlayerPanel extends JPanel{
-    private ActionButton actionButton;
-    private JoueurService joueurService;
-    private EquipeService equipeService;
-    private Joueur joueur;
 
     public PlayerPanel(Joueur joueur, ActionButton actionButton, JoueurService joueurService, EquipeService equipeService) {
-        this.actionButton = actionButton;
-        this.joueurService = joueurService;
-        this.equipeService = equipeService;
-        this.joueur = joueur;
 
         setLayout(new BorderLayout(10, 0)); // Espacement horizontal
         setBackground(Color.WHITE); // Fond gris clair
@@ -44,7 +36,7 @@ public class PlayerPanel extends JPanel{
         infoPanel.add(nameLabel);
 
         // Club et âge
-        JLabel clubAgeLabel = new JLabel("Club: " + equipeService.getEquipeById(1).getNom() + " | Âge: " + joueur.getAge());
+        JLabel clubAgeLabel = new JLabel("Club: " + equipeService.getEquipeById(joueur.getEquipe_id()).getNom() + " | Âge: " + joueur.getAge());
         clubAgeLabel.setFont(new Font("Arial", Font.PLAIN, 12));
         infoPanel.add(clubAgeLabel);
 
@@ -71,14 +63,4 @@ public class PlayerPanel extends JPanel{
         add(actionButton, BorderLayout.SOUTH); // Bouton d'action en bas
     }
 
-
-    /*public static void main(String[] args) {
-        JoueurService joueurService = new JoueurService();
-        EquipeService equipeService = new EquipeService();
-        PlayerPanel playerPanel = new PlayerPanel(new Joueur("Leclerc", "Charles", "Attaquant", 18, 5), new TransferBuyButton(0, joueurService), joueurService, equipeService);
-        JFrame frame = new JFrame();
-        frame.add(playerPanel);
-        frame.setSize(500, 200); // Ajusté pour mieux s'adapter à tous les éléments
-        frame.setVisible(true);
-    }*/
 }

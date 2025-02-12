@@ -22,7 +22,7 @@ public class MainFrame extends JFrame {
         this.equipeService = new EquipeService();
         // Création de la fenêtre principale
         setTitle("Gestion de l'Équipe");
-        setSize(1000, 500); // Ajusté pour mieux s'adapter à tous les éléments
+        setSize(1500, 1000); // Ajusté pour mieux s'adapter à tous les éléments
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout()); // Ajoute un espace entre les composants
@@ -32,7 +32,7 @@ public class MainFrame extends JFrame {
 
         //initialisation des panneaux
         this.panels = new ArrayList<>();
-        panels.add(new TeamManagementPanel(joueurService));
+        panels.add(new TeamManagementPanel(joueurService, equipeService));
         panels.add(new JPanel());
         panels.add(new JPanel());
         panels.add(new TransferPanel(joueurService, equipeService));
@@ -48,6 +48,7 @@ public class MainFrame extends JFrame {
         remove(currentVisiblePanel); // Supprime l'ancien panneau
         currentVisiblePanel = panels.get(index);
         add(currentVisiblePanel, BorderLayout.CENTER);
+        joueurService.notifyDataChanged(); // Mise à jour des UI sur les informations sur les joueurs
         revalidate(); // Met à jour l'affichage
         repaint();
     }

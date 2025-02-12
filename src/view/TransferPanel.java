@@ -2,114 +2,70 @@ package view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Font;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableModel;
 
-import controller.Equipe;
-import controller.History;
-import controller.Joueur;
 import service.interfaces.EquipeService;
 import service.interfaces.HistoryService;
 import service.interfaces.JoueurService;
-import view.composent.ActionButton;
-import view.composent.TransferBuyButton;
+import service.interfaces.PlayerDataListener;
 
-public class TransferPanel extends JPanel{
+public class TransferPanel extends JPanel implements PlayerDataListener{
 
-    private JTable table;
-    private DefaultTableModel model;
-    private JoueurService joueurService;
     private EquipeService equipeService;
     private HistoryService historyService;
-    private int myTeamId;
+    private JLabel balanceLabel;  // Label pour afficher le solde
 
     public TransferPanel(JoueurService joueurService, EquipeService equipeService) {
         super();
-        this.joueurService = joueurService;  // Utiliser le service injecté
         this.equipeService = equipeService;  // Utiliser le service injecté
         this.historyService = new HistoryService();
+        joueurService.addDataListener(this); // Inscription aux mises à jour du joueurService
+
         setLayout(new BorderLayout());
         setBorder(new EmptyBorder(10, 10, 10, 10));
         setBackground(Color.WHITE);
 
-        add(createTransferHistoryPanel(), BorderLayout.SOUTH);
+        // Création et ajout du JLabel pour afficher le solde
+        balanceLabel = new JLabel();
+        balanceLabel.setFont(new Font("Arial", Font.BOLD, 32)); // Style en gras et plus grand
+        balanceLabel.setForeground(Color.BLACK);
+        updateBalance(); // Initialise la valeur du solde
+
+        add(balanceLabel, BorderLayout.NORTH); // Ajout du label en haut du panel
+
+        add(new TransferHistoryPanel(joueurService, equipeService, historyService), BorderLayout.SOUTH);
         // Configuration des sous-panels
         JPanel centralPanel = new JPanel(new BorderLayout());
-        centralPanel.add(createPlayersForSalePanel(), BorderLayout.WEST);
-        centralPanel.add(new JPanel(), BorderLayout.CENTER);
-        centralPanel.add(createAvailablePlayersPanel(), BorderLayout.EAST);
+        centralPanel.add(new MarketPlayerPanel(joueurService, equipeService, true), BorderLayout.WEST);
+        centralPanel.add(new MarketPlayerPanel(joueurService, equipeService, false), BorderLayout.EAST);    
 
+        //créer un panneau vide au milieu
+        
+        JPanel emptyPanel = new JPanel();
+        emptyPanel.setBackground(Color.white);
+        centralPanel.add(emptyPanel, BorderLayout.CENTER);
+
+        centralPanel.setBackground(Color.WHITE);
         add(centralPanel, BorderLayout.CENTER);
     }
 
-    private JPanel createPlayersForSalePanel() {
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.add(new JLabel("Joueurs à Vendre"), BorderLayout.NORTH);
-        JPanel centralPanel = new JPanel();
-        java.util.List<Joueur> playersToSell = joueurService.getPlayerToSell();
-        if (playersToSell.isEmpty()) {
-            centralPanel.add(new JLabel("Aucun joueur n'est actuellement à vendre."), BorderLayout.CENTER);
-        } else {
-            for (Joueur joueur : playersToSell) {
-                if (joueur.getEquipe_id() == myTeamId)
-                    centralPanel.add(createPlayerPanel(joueur, new TransferBuyButton(joueur.getId(), joueurService)));
-            }
-        }
-        panel.add(centralPanel, BorderLayout.CENTER);
-        return panel;
+    /**
+     * Méthode pour mettre à jour l'affichage du solde de l'équipe.
+     */
+    private void updateBalance() {
+        int teamBalance = equipeService.getEquipeById(equipeService.getMonEquipe()).getSolde(); // Récupérer le solde depuis le service
+        balanceLabel.setText("Solde de l'équipe : " + teamBalance + " M€");
     }
 
-    private JPanel createAvailablePlayersPanel() {
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.add(new JLabel("Joueurs à Acheter"), BorderLayout.NORTH);
-        java.util.List<Joueur> playersToBuy = joueurService.getPlayerToSell();
-        JPanel centralPanel = new JPanel();
-        if (playersToBuy.isEmpty()) {
-            centralPanel.add(new JLabel("Aucun joueur n'est actuellement à vendre."), BorderLayout.CENTER);
-        } else {
-            for (Joueur joueur : playersToBuy) {
-                if (joueur.getEquipe_id() != myTeamId)
-                centralPanel.add(createPlayerPanel(joueur, new TransferBuyButton(joueur.getId(), joueurService)));
-            }
-        }
-        panel.add(centralPanel, BorderLayout.CENTER);
-        return panel;
-    }
-
-    private JPanel createPlayerPanel(Joueur joueur,ActionButton actionButton) {
-        PlayerPanel panel = new PlayerPanel(joueur, actionButton, joueurService, equipeService);
-        return panel;
-    }
-
-    private JPanel createTransferHistoryPanel() {
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.add(new JLabel("Historique des Transferts"), BorderLayout.NORTH);
-
-        String[] columnNames = {"Joueur", "Club Départ", "Club Arrivée", "Type de Transfert", "Montant", "Date"};
-        DefaultTableModel model = new DefaultTableModel(null, columnNames);
-        JTable table = new JTable(model);
-        JScrollPane scrollPane = new JScrollPane(table);
-
-        
-        java.util.List<History> history = historyService.getHistory();
-        for (History transfer : history) {
-            if(transfer.getNewEquipe_id() == myTeamId || transfer.getOldEquipe_id()==myTeamId){
-                Joueur joueur = joueurService.getPlayerById(transfer.getJoueur_id());
-                Equipe departingClub = equipeService.getEquipeById(transfer.getOldEquipe_id());
-                Equipe arrivingClub = equipeService.getEquipeById(transfer.getNewEquipe_id());
-                String type = transfer.getNewEquipe_id() == myTeamId ? "Achat":"Vente";
-
-                model.addRow(new Object[]{joueur.getPrenom()+" "+joueur.getNom(), departingClub.getNom(), arrivingClub.getNom(), 
-                                        type, joueur.getPrix(), transfer.getDate()});
-            }
-        }
-        
-        panel.add(scrollPane, BorderLayout.CENTER);
-        return panel;
+    /**
+     * Méthode appelée lorsque les données de joueurService changent.
+     */
+    @Override
+    public void onDataChanged() {
+        updateBalance(); // Mettre à jour le solde de l'équipe
     }
 }
