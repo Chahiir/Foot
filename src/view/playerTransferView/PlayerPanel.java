@@ -2,7 +2,6 @@ package view.playerTransferView;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 
@@ -10,12 +9,12 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 
 import controller.Joueur;
 import service.interfaces.EquipeService;
 import service.interfaces.JoueurService;
 import view.composent.ActionButton;
+import view.composent.InfoButton;
 
 public class PlayerPanel extends JPanel{
 
@@ -48,12 +47,7 @@ public class PlayerPanel extends JPanel{
 
         // Bouton pour le statut du joueur
         JPanel buttonPanel = new JPanel(new BorderLayout());
-        JButton positionButton = new JButton("Attaquant"); // À dynamiser selon le joueur
-        positionButton.setBackground(new Color(34, 139, 34)); // Vert foncé
-        positionButton.setForeground(Color.WHITE); // Texte blanc
-        positionButton.setBorder(new EmptyBorder(5, 10, 5, 10)); // Bordure pour le bouton
-        positionButton.setMaximumSize(new Dimension(10,10));
-        positionButton.setEnabled(false);
+        JButton positionButton = new InfoButton(joueur.getPosition()); 
         buttonPanel.setBackground(Color.WHITE);
         buttonPanel.add(positionButton, BorderLayout.NORTH);
 
