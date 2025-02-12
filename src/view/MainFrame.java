@@ -18,7 +18,11 @@ import view.teamManagmentView.TeamManagementPanel;
  */
 public class MainFrame extends JFrame {
 
-    private ArrayList<JPanel> panels;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private ArrayList<JPanel> panels;
     private JoueurService joueurService;
     private EquipeService equipeService;
     private JPanel currentVisiblePanel;

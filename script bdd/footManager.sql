@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Feb 11, 2025 at 02:02 PM
+-- Generation Time: Feb 12, 2025 at 04:15 PM
 -- Server version: 5.7.24
 -- PHP Version: 8.1.0
 
@@ -64,6 +64,7 @@ CREATE TABLE `history` (
   `oldEquipe_id` int(11) NOT NULL,
   `newEquipe_id` int(11) NOT NULL,
   `joueur_id` int(11) NOT NULL,
+  `prix` int(11) NOT NULL,
   `date` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -154,7 +155,8 @@ ALTER TABLE `composition`
 -- Indexes for table `equipe`
 --
 ALTER TABLE `equipe`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `nom` (`nom`);
 
 --
 -- Indexes for table `history`
