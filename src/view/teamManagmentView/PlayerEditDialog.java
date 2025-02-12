@@ -1,4 +1,4 @@
-package view;
+package view.teamManagmentView;
 
 import javax.swing.*;
 
@@ -6,8 +6,6 @@ import controller.Joueur;
 
 import java.awt.*;
 import java.awt.event.*;
-
-
 
 public class PlayerEditDialog extends JDialog {
     private JTextField nomField;

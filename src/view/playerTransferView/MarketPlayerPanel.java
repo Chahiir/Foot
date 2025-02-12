@@ -1,4 +1,4 @@
-package view;
+package view.playerTransferView;
 
 import java.awt.BorderLayout;
 import java.util.List;
