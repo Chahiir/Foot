@@ -9,7 +9,7 @@ import java.util.List;
 
 public class EquipeService {
 	
-	private int monEquipe;
+	private int monEquipe = -1;
 	
 	public int getMonEquipe() {
 		return monEquipe;
@@ -28,8 +28,6 @@ public class EquipeService {
 		EquipeDAO equipeDAO = new EquipeDAO();
 		return equipeDAO.getListeEquipes();
 	}
-
-   
 
     public void deleteTeamById( int teamId) {
     	EquipeDAO equipeDAO = new EquipeDAO();

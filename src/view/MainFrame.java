@@ -20,28 +20,35 @@ public class MainFrame extends JFrame {
     public MainFrame() {
         this.joueurService = new JoueurService();
         this.equipeService = new EquipeService();
-        // Création de la fenêtre principale
-        setTitle("Gestion de l'Équipe");
-        setSize(1500, 1000); // Ajusté pour mieux s'adapter à tous les éléments
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setLayout(new BorderLayout()); // Ajoute un espace entre les composants
 
-        // Panneau West pour la navigation
-        add(new MenuPanel(this, 0), BorderLayout.WEST);
+        // Affichage de la boîte de dialogue de sélection d'équipe
+        TeamSelectionDialog teamDialog = new TeamSelectionDialog(this, equipeService);
+        teamDialog.setVisible(true); // Affiche le dialogue et bloque jusqu'à la sélection
 
-        //initialisation des panneaux
-        this.panels = new ArrayList<>();
-        panels.add(new TeamManagementPanel(joueurService, equipeService));
-        panels.add(new JPanel());
-        panels.add(new JPanel());
-        panels.add(new TransferPanel(joueurService, equipeService));
-     
-        currentVisiblePanel = panels.get(0);
-        add(currentVisiblePanel, BorderLayout.CENTER);
+        if (equipeService.getMonEquipe() != -1){
+            // Création de la fenêtre principale
+            setTitle("Gestion de l'Équipe");
+            setSize(1500, 1000); // Ajusté pour mieux s'adapter à tous les éléments
+            setLocationRelativeTo(null);
+            setDefaultCloseOperation(EXIT_ON_CLOSE);
+            setLayout(new BorderLayout()); // Ajoute un espace entre les composants
 
-        setLocationRelativeTo(null);
-        setVisible(true);
+            // Panneau West pour la navigation
+            add(new MenuPanel(this, 0), BorderLayout.WEST);
+
+            //initialisation des panneaux
+            this.panels = new ArrayList<>();
+            panels.add(new TeamManagementPanel(joueurService, equipeService));
+            panels.add(new JPanel());
+            panels.add(new JPanel());
+            panels.add(new TransferPanel(joueurService, equipeService));
+        
+            currentVisiblePanel = panels.get(0);
+            add(currentVisiblePanel, BorderLayout.CENTER);
+
+            setLocationRelativeTo(null);
+            setVisible(true);
+        }
     }
 
     public void setSelectedPanel(int index){
