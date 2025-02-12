@@ -45,14 +45,6 @@ CREATE TABLE `equipe` (
   `solde` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- Dumping data for table `equipe`
---
-
-INSERT INTO `equipe` (`id`, `nom`, `solde`) VALUES
-(1, 'Wydad.ac', 150),
-(2, 'Wydad AC', 150);
-
 -- --------------------------------------------------------
 
 --
@@ -84,13 +76,6 @@ CREATE TABLE `joueur` (
   `aVendre` tinyint(1) NOT NULL DEFAULT '0',
   `equipe_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Dumping data for table `joueur`
---
-
-INSERT INTO `joueur` (`id`, `nom`, `prenom`, `position`, `age`, `prix`, `aVendre`, `equipe_id`) VALUES
-(1, 'TEST', '', 'Att', 25, 15, 0, 1);
 
 -- --------------------------------------------------------
 
@@ -132,16 +117,6 @@ CREATE TABLE `staff` (
   `equipe_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- Dumping data for table `staff`
---
-
-INSERT INTO `staff` (`id`, `nom`, `role`, `specialite`, `equipe_id`) VALUES
-(1, 'TEST', 'Massage', 'Physic', 1);
-
---
--- Indexes for dumped tables
---
 
 --
 -- Indexes for table `composition`
