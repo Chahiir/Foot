@@ -134,6 +134,7 @@ public class EquipeDAO {
             // Attribution des valeurs
             ps.setString(1, equipe.getNom());
             ps.setInt(2, equipe.getSolde());
+            ps.setInt(3, equipe.getId());
             
 
             // Exécution de la requête
