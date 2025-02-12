@@ -8,32 +8,35 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 import controller.Joueur;
+import service.interfaces.EquipeService;
 import service.interfaces.JoueurService;
-import view.PlayerEditDialog;
+import view.teamManagmentView.PlayerEditDialog;
 
 public class AddPlayerButton extends ActionButton {
 
     private JoueurService joueurService;
+    private EquipeService equipeService;
 
-	public AddPlayerButton(String label, JoueurService joueurService) {
+	public AddPlayerButton(String label, JoueurService joueurService, EquipeService equipeService) {
         super(label);
         this.joueurService = joueurService;
+        this.equipeService = equipeService;
         setBackground_color(new Color(80,112,242));
         pressed_background_color = background_color.darker();
         addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                performDeleteAction();
+                performAddAction();
             }
         });
         setPressedColor();
     }
 
-    private void performDeleteAction() {
+    private void performAddAction() {
         JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
-        PlayerEditDialog dialog = new PlayerEditDialog(frame, new Joueur());
+        PlayerEditDialog dialog = new PlayerEditDialog(frame, new Joueur(), equipeService);
         dialog.setVisible(true);
         Joueur editedPlayer = dialog.getJoueur();
-        joueurService.updatePlayer(editedPlayer);
+        joueurService.addPlayer(editedPlayer);
     }
 }

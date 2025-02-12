@@ -69,11 +69,18 @@ public class PlayerEditDialog extends JDialog {
 
     private void savePlayer() {
         joueur.setNom(nomField.getText());
+        joueur.setPrenom(prenomField.getText());
         joueur.setPosition(positionField.getText());
-        joueur.setAge(Integer.parseInt(ageField.getText()));
+        try{
+            joueur.setAge(Integer.parseInt(ageField.getText()));
+        
         joueur.setPrix(Integer.parseInt(prixField.getText()));
         joueur.setEquipe_id(equipeService.getMonEquipe());
         dispose();
+        }
+        catch(NumberFormatException e){
+            JOptionPane.showMessageDialog(this, "L'age et le prix doivent être des entiers", "Erreur", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     public Joueur getJoueur() {

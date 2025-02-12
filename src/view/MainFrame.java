@@ -8,6 +8,8 @@ import javax.swing.JPanel;
 
 import service.interfaces.EquipeService;
 import service.interfaces.JoueurService;
+import view.playerTransferView.TransferPanel;
+import view.teamManagmentView.TeamManagementPanel;
 
 
 public class MainFrame extends JFrame {
