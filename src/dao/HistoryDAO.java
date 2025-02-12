@@ -53,12 +53,13 @@ public class HistoryDAO {
             // Connexion à la base de données
             con = DriverManager.getConnection(URL, LOGIN, PASS);
             // Préparation de la requête SQL
-            ps = con.prepareStatement("INSERT INTO history (id, oldEquipe_id, newEquipe_id, joueur_id, date) VALUES (?, ?, ?,? , ?)");
+            ps = con.prepareStatement("INSERT INTO history (id, oldEquipe_id, newEquipe_id, joueur_id,prix, date) VALUES (?, ?, ?,? ,?, ?)");
             ps.setInt(1, nouvHistory.getId());
             ps.setInt(2, nouvHistory.getOldEquipe_id());
             ps.setInt(3, nouvHistory.getNewEquipe_id());
             ps.setInt(4, nouvHistory.getJoueur_id());
-            ps.setDate(5, java.sql.Date.valueOf(nouvHistory.getDate()));
+            ps.setInt(5, nouvHistory.getPrix());
+            ps.setDate(6, java.sql.Date.valueOf(nouvHistory.getDate()));
 
 
             // Exécution de la requête
@@ -99,7 +100,7 @@ public class HistoryDAO {
             rs = ps.executeQuery();
             // Parcours des résultats
             while (rs.next()) {
-                retour.add(new History(rs.getInt("id"), rs.getInt("oldEquipe_id"), rs.getInt("newEquipe_id"), rs.getInt("joueur_id"),rs.getDate("date").toLocalDate()));
+                retour.add(new History(rs.getInt("id"), rs.getInt("oldEquipe_id"), rs.getInt("newEquipe_id"), rs.getInt("joueur_id"),rs.getInt("prix"),rs.getDate("date").toLocalDate()));
             }
 
         } catch (Exception e) {

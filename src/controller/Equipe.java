@@ -1,14 +1,13 @@
 package controller;
 
 /**
- * Classe Equipe
- * Représente une équipe avec un identifiant, un nom et un solde.
+ * Classe représentant une équipe avec un identifiant, un nom et un solde financier.
  * @version 1.1
  */
 public class Equipe {
 
     /** 
-     * Identifiant unique de l'équipe.
+     * Identifiant unique de l'équipe (généré par la base de données).
      */
     private int id;
 
@@ -18,15 +17,15 @@ public class Equipe {
     private String nom;
 
     /**
-     * Solde disponible pour l'équipe (en millions d'euros).
+     * Solde disponible pour l'équipe en millions d'euros.
      */
     private int solde;
 
     /**
      * Constructeur complet pour initialiser une équipe.
-     * @param id Identifiant de l'équipe.
+     * @param id Identifiant unique de l'équipe (géré par la base de données).
      * @param nom Nom de l'équipe.
-     * @param solde Solde de l'équipe (en millions d'euros).
+     * @param solde Solde disponible en millions d'euros.
      */
     public Equipe(int id, String nom, int solde) {
         this.id = id;
@@ -35,9 +34,9 @@ public class Equipe {
     }
 
     /**
-     * Constructeur pour initialiser une équipe sans spécifier l'identifiant.
+     * Constructeur pour initialiser une équipe sans identifiant (cas où l'ID est auto-généré en base).
      * @param nom Nom de l'équipe.
-     * @param solde Solde de l'équipe (en millions d'euros).
+     * @param solde Solde disponible en millions d'euros.
      */
     public Equipe(String nom, int solde) {
         this.nom = nom;
@@ -45,7 +44,7 @@ public class Equipe {
     }
 
     /**
-     * Constructeur pour initialiser une équipe avec un nom uniquement.
+     * Constructeur minimaliste pour une équipe avec un nom uniquement.
      * Le solde est initialisé à 0 par défaut.
      * @param nom Nom de l'équipe.
      */
@@ -55,15 +54,23 @@ public class Equipe {
     }
 
     /**
-     * Getter pour l'identifiant de l'équipe.
-     * @return Identifiant de l'équipe.
+     * Obtient l'identifiant de l'équipe.
+     * @return Identifiant unique de l'équipe.
      */
     public int getId() {
         return id;
     }
 
     /**
-     * Getter pour le nom de l'équipe.
+     * Définit l'identifiant de l'équipe (utile uniquement si l'ID n'est pas auto-généré).
+     * @param id Nouvel identifiant unique de l'équipe.
+     */
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    /**
+     * Obtient le nom de l'équipe.
      * @return Nom de l'équipe.
      */
     public String getNom() {
@@ -71,7 +78,7 @@ public class Equipe {
     }
 
     /**
-     * Setter pour le nom de l'équipe.
+     * Modifie le nom de l'équipe.
      * @param nom Nouveau nom de l'équipe.
      */
     public void setNom(String nom) {
@@ -79,23 +86,23 @@ public class Equipe {
     }
 
     /**
-     * Getter pour le solde de l'équipe.
-     * @return Solde de l'équipe (en millions d'euros).
+     * Obtient le solde financier de l'équipe.
+     * @return Solde disponible en millions d'euros.
      */
     public int getSolde() {
         return solde;
     }
 
     /**
-     * Setter pour le solde de l'équipe.
-     * @param solde Nouveau solde de l'équipe (en millions d'euros).
+     * Modifie le solde de l'équipe.
+     * @param solde Nouveau solde en millions d'euros.
      */
     public void setSolde(int solde) {
         this.solde = solde;
     }
 
     /**
-     * Redéfinition de la méthode toString pour afficher les informations de l'équipe.
+     * Redéfinition de la méthode toString pour afficher les informations de l'équipe sous un format lisible.
      * @return Une chaîne de caractères représentant l'équipe.
      */
     @Override
