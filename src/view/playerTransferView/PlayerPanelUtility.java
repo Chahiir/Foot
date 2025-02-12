@@ -1,7 +1,5 @@
 package view.playerTransferView;
 
-
-
 import controller.Joueur;
 import service.interfaces.EquipeService;
 import service.interfaces.JoueurService;
@@ -18,20 +16,20 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 /**
- * Utility class to create player listing panels for different scenarios like selling or buying players.
- * This class provides a generic way to create and manage player panels based on a list of players.
+ * Classe utilitaire pour créer des panneaux affichant une liste de joueurs, soit pour les vendre soit pour les acheter.
+ * Cette classe offre une méthode générique pour organiser ces panneaux basée sur une liste de joueurs.
  */
 public class PlayerPanelUtility {
 
     /**
-     * Creates a panel listing players either for sale or purchase based on the given parameters.
+     * Crée un panneau listant les joueurs à vendre ou à acheter en fonction des paramètres donnés.
      * 
-     * @param title The title of the panel, e.g., "Joueurs à Vendre" or "Joueurs à Acheter".
-     * @param players List of players to be displayed in the panel.
-     * @param isSelling Boolean flag indicating whether the panel is for selling players (true) or buying players (false).
-     * @param joueurService The service used to interact with player data.
-     * @param equipeService The service used to get team information, such as team names by ID.
-     * @return A JPanel configured with a list of players and appropriate actions (sell or buy).
+     * @param title Le titre du panneau, comme "Joueurs à Vendre" ou "Joueurs à Acheter".
+     * @param players La liste des joueurs à afficher dans le panneau.
+     * @param isSelling Indique si le panneau est destiné à la vente (true) ou à l'achat (false) de joueurs.
+     * @param joueurService Service utilisé pour interagir avec les données des joueurs.
+     * @param equipeService Service pour obtenir des informations sur les équipes, tel que les noms des équipes par leur ID.
+     * @return Un JPanel configuré avec une liste de joueurs et les actions appropriées (vendre ou acheter).
      */
     public static JPanel createPlayerListingPanel(String title, List<Joueur> players, boolean isSelling, JoueurService joueurService, EquipeService equipeService) {
         JPanel panel = new JPanel(new BorderLayout());
@@ -47,20 +45,20 @@ public class PlayerPanelUtility {
         gbc.anchor = GridBagConstraints.NORTH;
         gbc.insets = new Insets(2, 2, 2, 2);
 
-        // Check if the list of players is empty and display a message if so
+        players.removeIf(joueur -> (!isSelling && joueur.getEquipe_id() == equipeService.getMonEquipe()) || (isSelling && joueur.getEquipe_id() != equipeService.getMonEquipe()));
+
+        // Vérifie si la liste des joueurs est vide et affiche un message si c'est le cas
         if (players.isEmpty()) {
             centralPanel.add(new JLabel("Aucun joueur n'est actuellement disponible."), gbc);
         } else {
-            // Create a PlayerPanel for each player in the list based on the team and action required
+            // Crée un PlayerPanel pour chaque joueur dans la liste basé sur l'action requise
             for (Joueur joueur : players) {
-                if ((isSelling && joueur.getEquipe_id() == equipeService.getMonEquipe()) || (!isSelling && joueur.getEquipe_id() != equipeService.getMonEquipe())) {
-                    ActionButton button = isSelling ? new TransferSellButton() : new TransferBuyButton(joueur.getId(), joueurService, equipeService);
-                    centralPanel.add(createPlayerPanel(joueur, button, joueurService, equipeService), gbc);
-                }
+                ActionButton button = isSelling ? new TransferSellButton() : new TransferBuyButton(joueur.getId(), joueurService, equipeService);
+                centralPanel.add(createPlayerPanel(joueur, button, joueurService, equipeService), gbc);
             }
         }
 
-        // Add a spacer component at the bottom to push all content to the top
+        // Ajoute un composant espaceur en bas pour pousser tout le contenu vers le haut
         gbc.weighty = 1;
         centralPanel.add(new JPanel(), gbc);
 
@@ -74,13 +72,13 @@ public class PlayerPanelUtility {
     }
 
     /**
-     * Helper method to create an individual PlayerPanel.
+     * Méthode auxiliaire pour créer un PlayerPanel individuel.
      * 
-     * @param joueur The player for whom the panel is created.
-     * @param actionButton The action button associated with the player.
-     * @param joueurService Service for managing player data.
-     * @param equipeService Service for managing team data.
-     * @return A configured PlayerPanel for the given player.
+     * @param joueur Le joueur pour qui le panneau est créé.
+     * @param actionButton Le bouton d'action associé au joueur.
+     * @param joueurService Service pour la gestion des données des joueurs.
+     * @param equipeService Service pour la gestion des données des équipes.
+     * @return Un PlayerPanel configuré pour le joueur donné.
      */
     private static JPanel createPlayerPanel(Joueur joueur, ActionButton actionButton, JoueurService joueurService, EquipeService equipeService) {
         return new PlayerPanel(joueur, actionButton, joueurService, equipeService);

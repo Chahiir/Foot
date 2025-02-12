@@ -3,68 +3,66 @@ package view.teamManagmentView;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-
-import javax.swing.BorderFactory;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
-
 import controller.Joueur;
 import service.interfaces.EquipeService;
 import service.interfaces.JoueurService;
 import service.interfaces.PlayerDataListener;
-import view.composent.AddPlayerButton;
-import view.composent.BoldHeaderRenderer;
-import view.composent.ButtonEditor;
-import view.composent.ButtonRenderer;
-import view.composent.CustomCellRenderer;
+import view.composent.*;
 
-public class PlayersPanel extends JPanel implements PlayerDataListener{
-	private JTable table;
+/**
+ * La classe PlayersPanel fournit une interface utilisateur permettant d'afficher et d'interagir
+ * avec les données des joueurs dans une application de gestion d'équipe sportive.
+ * Elle permet d'ajouter de nouveaux joueurs et de modifier les existants.
+ */
+public class PlayersPanel extends JPanel implements PlayerDataListener {
+    private JTable table;
     private DefaultTableModel model;
     private JoueurService joueurService;
     private EquipeService equipeService;
-    
-	public PlayersPanel(JoueurService joueurService, EquipeService equipeService) {
-		super();
 
-        //ajout de la couche service de gestion des joueurs et équipe
+    /**
+     * Constructeur de PlayersPanel avec dépendances sur les services de gestion des joueurs et des équipes.
+     * @param joueurService le service permettant de gérer les opérations sur les joueurs
+     * @param equipeService le service permettant de gérer les opérations sur les équipes
+     */
+    public PlayersPanel(JoueurService joueurService, EquipeService equipeService) {
+        super();
+        // Ajout des services de gestion des joueurs et des équipes
         this.joueurService = joueurService;
         this.equipeService = equipeService;
-        joueurService.addDataListener(this);  // Enregistrez le panel comme listener
+        joueurService.addDataListener(this);  // Enregistrement du panneau comme écouteur de données
 
-		setLayout(new BorderLayout());
-		setBorder(new EmptyBorder(10, 10, 10, 10));
-		setBackground(new Color(0,0,0,Color.TRANSLUCENT));
-		
-		// North panel with add button and search field using BorderLayout
+        setLayout(new BorderLayout());
+        setBorder(new EmptyBorder(10, 10, 10, 10));
+        setBackground(new Color(0,0,0, Color.TRANSLUCENT));
+        
+        // Configuration du panneau supérieur avec le bouton d'ajout de joueur et un champ de recherche
         JPanel northPanel = new JPanel(new BorderLayout());
-        northPanel.setBackground(new Color(0,0,0,Color.TRANSLUCENT));
-        northPanel.setBorder(new EmptyBorder(10,10,10,10));
+        northPanel.setBackground(new Color(0,0,0, Color.TRANSLUCENT));
+        northPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         AddPlayerButton addPlayerButton = new AddPlayerButton("Ajouter un joueur", joueurService, equipeService);
-        addPlayerButton.setMinimumSize(new Dimension(20,30));
+        addPlayerButton.setMinimumSize(new Dimension(20, 30));
         addPlayerButton.setForeground(Color.WHITE);
         JTextField searchField = new JTextField(15);
         northPanel.add(addPlayerButton, BorderLayout.WEST);
         northPanel.add(searchField, BorderLayout.EAST);
 
-        // Setup table for players
+        // Configuration du tableau pour afficher les données des joueurs
         String[] columnNames = {"Nom", "Prénom", "Poste", "Actions"};
-        Object[][] data = {}; // initial empty data
+        Object[][] data = {};
         model = new DefaultTableModel(data, columnNames) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column == 3; // Only actions column is editable
+                return column == 3; // Seule la colonne des actions est éditable
             }
         };
         
         table = new JTable(model);
         BoldHeaderRenderer headerRenderer = new BoldHeaderRenderer();
-
         JTableHeader header = table.getTableHeader();
         header.setDefaultRenderer(headerRenderer);
         
@@ -76,39 +74,51 @@ public class PlayersPanel extends JPanel implements PlayerDataListener{
         table.setRowHeight(40);
         table.setBackground(Color.white);
 
-        // Add rows with data 
+        // Chargement initial des données et mise en place de l'affichage
         loadData();
-
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
-        table.setShowGrid(false); // Disable cell borders
-        table.setIntercellSpacing(new Dimension(0, 0)); // Remove spacing between cells
+        table.setShowGrid(false); // Désactive les bordures des cellules
+        table.setIntercellSpacing(new Dimension(0, 0)); // Supprime l'espacement entre les cellules
         add(northPanel, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
-	}
-
-    @Override
-    public void onDataChanged() {
-        reloadData();  // Recharge les données lorsque le service notifie un changement
     }
 
+    /**
+     * Méthode appelée lorsque les données du JoueurService sont mises à jour.
+     * Elle déclenche la mise à jour de l'interface utilisateur.
+     */
+    @Override
+    public void onDataChanged() {
+        reloadData();  // Recharge les données lorsqu'une mise à jour est signalée
+    }
+
+    /**
+     * Recharge les données des joueurs depuis le service et met à jour le modèle du tableau.
+     */
     private void reloadData() {
         model.setRowCount(0); // Efface les données existantes
         joueurService.getAllPlayers().forEach((joueur) -> {
             if (joueur.getEquipe_id() == equipeService.getMonEquipe())
                 addRowData(joueur);
         });
-	}
+    }
     
-
-	private void loadData() {
+    /**
+     * Charge les données initiales des joueurs à partir du service dans le modèle du tableau.
+     */
+    private void loadData() {
         joueurService.getAllPlayers().forEach((joueur) -> {
             if (joueur.getEquipe_id() == equipeService.getMonEquipe())
                 addRowData(joueur);
         });
-	}
-    
-	private void addRowData(Joueur joueur) {
+    }
+
+    /**
+     * Ajoute une ligne contenant les données d'un joueur au modèle du tableau.
+     * @param joueur le joueur dont les données doivent être ajoutées
+     */
+    private void addRowData(Joueur joueur) {
         model.addRow(new Object[]{joueur.getNom(), joueur.getPrenom(), joueur.getPosition(), joueur.getId()});
     }
 }
