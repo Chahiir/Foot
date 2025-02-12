@@ -3,6 +3,7 @@ package view.teamManagmentView;
 import javax.swing.*;
 
 import controller.Joueur;
+import service.interfaces.EquipeService;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -13,15 +14,16 @@ public class PlayerEditDialog extends JDialog {
     private JTextField positionField;
     private JTextField ageField;
     private JTextField prixField;
-    private JTextField equipeIdField;
     private JButton saveButton;
     private JButton cancelButton;
 
     private Joueur joueur;
+    private EquipeService equipeService;
 
-    public PlayerEditDialog(Frame parent, Joueur joueur) {
+    public PlayerEditDialog(Frame parent, Joueur joueur, EquipeService equipeService) {
         super(parent, "Édition de Joueur", true);
         this.joueur = joueur;
+        this.equipeService = equipeService;
 
         setLayout(new GridLayout(0, 2, 10, 10));
         add(new JLabel("Nom:"));
@@ -44,10 +46,6 @@ public class PlayerEditDialog extends JDialog {
         add(new JLabel("Prix (M €):"));
         prixField = new JTextField(String.valueOf(joueur.getPrix()));
         add(prixField);
-
-        add(new JLabel("ID Équipe:"));
-        equipeIdField = new JTextField(String.valueOf(joueur.getEquipe_id()));
-        add(equipeIdField);
 
         saveButton = new JButton("Enregistrer");
         saveButton.addActionListener(new ActionListener() {
@@ -74,7 +72,7 @@ public class PlayerEditDialog extends JDialog {
         joueur.setPosition(positionField.getText());
         joueur.setAge(Integer.parseInt(ageField.getText()));
         joueur.setPrix(Integer.parseInt(prixField.getText()));
-        joueur.setEquipe_id(Integer.parseInt(equipeIdField.getText()));
+        joueur.setEquipe_id(equipeService.getMonEquipe());
         dispose();
     }
 

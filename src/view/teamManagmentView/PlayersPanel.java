@@ -71,8 +71,8 @@ public class PlayersPanel extends JPanel implements PlayerDataListener{
         for (int i = 0; i < table.getColumnCount() - 1; i++) {
             table.getColumnModel().getColumn(i).setCellRenderer(new CustomCellRenderer());
         }
-        table.getColumn("Actions").setCellRenderer(new ButtonRenderer(joueurService));
-        table.getColumn("Actions").setCellEditor(new ButtonEditor(joueurService));
+        table.getColumn("Actions").setCellRenderer(new ButtonRenderer(joueurService, equipeService));
+        table.getColumn("Actions").setCellEditor(new ButtonEditor(joueurService, equipeService));
         table.setRowHeight(40);
         table.setBackground(Color.white);
 

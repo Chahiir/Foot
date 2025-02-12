@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 
+import service.interfaces.EquipeService;
 import service.interfaces.JoueurService;
 
 // Custom editor to handle actions in JTable cells
@@ -16,9 +17,9 @@ public class ButtonEditor extends AbstractCellEditor implements TableCellEditor 
     private SellButton sellButton;
     private JPanel panel;
 
-    public ButtonEditor(JoueurService joueurService) {
+    public ButtonEditor(JoueurService joueurService, EquipeService equipeService) {
         panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        editButton = new EditButton("Modifier", -1, joueurService);
+        editButton = new EditButton("Modifier", -1, joueurService, equipeService);
         sellButton = new SellButton("Vendre", -1, joueurService);
         panel.add(editButton);
         panel.add(sellButton);

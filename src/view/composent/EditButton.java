@@ -8,17 +8,20 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 import controller.Joueur;
+import service.interfaces.EquipeService;
 import service.interfaces.JoueurService;
-import view.PlayerEditDialog;
+import view.teamManagmentView.PlayerEditDialog;
 
 public class EditButton extends ActionButton {
 	
 	private int targetId;
     private JoueurService joueurService;
+    private EquipeService equipeService;
     
-    public EditButton(String label, int targetId, JoueurService joueurService) {
+    public EditButton(String label, int targetId, JoueurService joueurService, EquipeService equipeService) {
     	super(label);
         this.joueurService = joueurService; // injection pour réaliser les actions
+        this.equipeService = equipeService; // injection pour réaliser les actions
     	this.targetId = targetId;  // Initialize with specific row ID
     	setBackground_color(new Color(93, 173, 226));
     	border_color = new Color(200,200,200);
@@ -39,7 +42,7 @@ public class EditButton extends ActionButton {
     
     private void performEditAction() {
         JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
-        PlayerEditDialog dialog = new PlayerEditDialog(frame, joueurService.getPlayerById(targetId));
+        PlayerEditDialog dialog = new PlayerEditDialog(frame, joueurService.getPlayerById(targetId), equipeService);
         dialog.setVisible(true);
         Joueur editedPlayer = dialog.getJoueur();
         joueurService.updatePlayer(editedPlayer);

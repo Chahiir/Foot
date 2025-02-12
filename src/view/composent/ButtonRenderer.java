@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
+import service.interfaces.EquipeService;
 import service.interfaces.JoueurService;
 
 // Custom renderer to place buttons in JTable cells
@@ -15,9 +16,9 @@ public class ButtonRenderer extends JPanel implements TableCellRenderer {
     EditButton editButton;
     SellButton sellButton;
 
-    public ButtonRenderer(JoueurService joueurService) {
+    public ButtonRenderer(JoueurService joueurService, EquipeService equipeService) {
         setLayout(new FlowLayout(FlowLayout.LEFT));
-        editButton = new EditButton("Modifier", -1, joueurService);  // Initial ID set to -1 or other invalid value
+        editButton = new EditButton("Modifier", -1, joueurService, equipeService);  // Initial ID set to -1 or other invalid value
         sellButton = new SellButton("Vendre", -1, joueurService);
         add(editButton);
         add(sellButton);
