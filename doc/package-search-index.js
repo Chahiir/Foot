@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"config"},{"l":"controller"},{"l":"dao"},{"l":"service.interfaces"},{"l":"view"},{"l":"view.composent"},{"l":"view.playerTransferView"},{"l":"view.teamManagmentView"}];updateSearchResults();

@@ -1,0 +1,8 @@
+config
+controller
+dao
+service.interfaces
+view
+view.composent
+view.playerTransferView
+view.teamManagmentView
